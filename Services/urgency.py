@@ -82,5 +82,40 @@ except Exception as e:
     zeroshot = None
 
 
+
+    # Try HF zero-shot first
+    if zeroshot is not None:
+        try:
+            # Define urgency levels with descriptive labels
+            labels = [
+                'High urgency - requires immediate HR attention',
+                'Medium urgency - needs prompt follow-up',
+                'Low urgency - routine feedback'
+            ]
+            hypothesis_template = 'This feedback indicates {}.'
+            
+            res = zeroshot(text, candidate_labels=labels, hypothesis_template=hypothesis_template)
+            
+            # Map HF results to our urgency levels
+            label = res['labels'][0]
+            score = float(res['scores'][0])
+            
+            if 'High urgency' in label:
+                urgency_level = 'High'
+            elif 'Medium urgency' in label:
+                urgency_level = 'Medium'
+            else:
+                urgency_level = 'Low'
+            
+            # Apply confidence threshold - if HF confidence is too low, use heuristic
+            if score < 0.6:
+                return heuristic_urgency(text)
+            
+            reason = f'Hugging Face zero-shot classification (confidence: {score:.2f})'
+            return {'urgency': urgency_level, 'confidence': score, 'reason': reason}
+            
+        except Exception as e:
+            print(f'Urgency Agent: inference error: {e}')
+
     # Fallback to heuristic
     return heuristic_urgency(text)
