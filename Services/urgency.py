@@ -81,7 +81,11 @@ except Exception as e:
     print(f'Urgency Agent: failed to load HF model: {e}')
     zeroshot = None
 
-
+@app.post('/detect')
+async def detect_urgency(inp: Inp):
+    text = (inp.text or '').strip()
+    if not text:
+        return {'urgency': 'Low', 'confidence': 1.0, 'reason': 'Empty input'}
 
     # Try HF zero-shot first
     if zeroshot is not None:
