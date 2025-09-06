@@ -1,0 +1,18 @@
+from fastapi import FastAPI, HTTPException, Depends
+from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
+from pydantic import BaseModel
+import jwt, os, time
+from dotenv import load_dotenv
+from cryptography.fernet import Fernet
+from fastapi.middleware.cors import CORSMiddleware
+
+load_dotenv = lambda: None
+try:
+    from dotenv import load_dotenv as _ld
+    _ld()
+except Exception:
+    pass
+
+JWT_SECRET = os.getenv('JWT_SECRET', 'change_me_secret')
+ALGO = 'HS256'
+FERNET_KEY = os.getenv('FERNET_KEY')
