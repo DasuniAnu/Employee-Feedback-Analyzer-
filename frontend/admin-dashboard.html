@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - HR Analytics</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f7fa;
+            min-height: 100vh;
+        }
+
+        /* Add more CSS here for styling cards, filters, etc. */
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>🏢 HR Analytics Dashboard</h1>
+        <div class="user-info">
+            <span>Welcome, <strong>HR Admin</strong></span>
+            <button class="logout-btn" onclick="logout()">Logout</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <!-- Statistics Overview -->
+        <div class="stats-grid">
+            <div class="stat-card urgent">
+                <h3 id="urgentCount">0</h3>
+                <p>High Urgency Items</p>
+            </div>
+            <div class="stat-card ne
