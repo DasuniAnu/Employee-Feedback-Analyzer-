@@ -1,3 +1,25 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - HR Analytics</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f7fa;
+            min-height: 100vh;
+        }
+
+        /* Add more CSS here for styling cards, filters, etc. */
+    </style>
+</head>
 <body>
     <div class="header">
         <h1>🏢 HR Analytics Dashboard</h1>
@@ -14,38 +36,4 @@
                 <h3 id="urgentCount">0</h3>
                 <p>High Urgency Items</p>
             </div>
-            <div class="stat-card negative">
-                <h3 id="negativeCount">0</h3>
-                <p>Negative Sentiment</p>
-            </div>
-            <div class="stat-card positive">
-                <h3 id="positiveCount">0</h3>
-                <p>Positive Sentiment</p>
-            </div>
-            <div class="stat-card">
-                <h3 id="totalCount">0</h3>
-                <p>Total Feedback</p>
-            </div>
-        </div>
-
-        <!-- Filters -->
-        <div class="filters">
-            <h3>🔍 Filter Feedback</h3>
-            <div class="filter-row">
-                <div class="filter-group">
-                    <label>Sentiment</label>
-                    <select id="sentimentFilter">
-                        <option value="">All Sentiments</option>
-                        <option value="Positive">Positive</option>
-                        <option value="Negative">Negative</option>
-                        <option value="Neutral">Neutral</option>
-                    </select>
-                </div>
-                <div class="filter-group">
-                    <label>Urgency</label>
-                    <select id="urgencyFilter">
-                        <option value="">All Urgency Levels</option>
-                        <option value="High">High</option>
-                        <option value="Medium">Medium</option>
-                        <option value="Low">Low</option>
-                    </select>
+            <div class="stat-card ne
