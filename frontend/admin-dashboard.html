@@ -10,6 +10,99 @@
             padding: 0;
             box-sizing: border-box;
         }
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .user-info span {
+            color: #666;
+        }
+
+        .logout-btn {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .logout-btn:hover {
+            background: #c82333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 2rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .stat-card h3 {
+            color: #333;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .stat-card p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .stat-card.urgent {
+            border-left: 4px solid #dc3545;
+        }
+
+        .stat-card.negative {
+            border-left: 4px solid #ffc107;
+        }
+
+        .stat-card.positive {
+            border-left: 4px solid #28a745;
+        }
+
+        .filters {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .filters h3 {
+            color: #333;
+            margin-bottom: 1rem;
+        }
+
+        .filter-row {
+            display: flex;
+            gap: 1rem;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 0.25rem;
+        }
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
