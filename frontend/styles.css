@@ -1,0 +1,7 @@
+body { font-family: system-ui, Arial; display: grid; place-items: center; height: 100vh; margin: 0; background: #f7f7fb; }
+.card { width: min(900px, 92vw); background: #fff; border-radius: 16px; padding: 24px; box-shadow: 0 10px 30px rgba(0,0,0,0.08); }
+h1 { margin-top: 0; }
+#auth { display: flex; gap: 8px; margin-bottom: 12px; }
+#feedback { width: 100%; height: 160px; margin: 12px 0; padding: 12px; border-radius: 8px; border: 1px solid #ddd; }
+button { padding: 10px 16px; border: 0; border-radius: 10px; background: #111; color: #fff; cursor: pointer; }
+pre { background: #0b1020; color: #c7e1ff; padding: 16px; border-radius: 12px; overflow: auto; max-height: 300px; }
