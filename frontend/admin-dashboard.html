@@ -10,6 +10,27 @@
             padding: 0;
             box-sizing: border-box;
         }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f7fa;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: white;
+            padding: 1rem 2rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            color: #333;
+            font-size: 1.5rem;
+        }
+
         .user-info {
             display: flex;
             align-items: center;
@@ -104,13 +125,203 @@
             gap: 0.25rem;
         }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: #f5f7fa;
-            min-height: 100vh;
+        .filter-group label {
+            font-size: 0.8rem;
+            color: #666;
+            font-weight: 500;
         }
 
-        /* Add more CSS here for styling cards, filters, etc. */
+        .filter-group select,
+        .filter-group input {
+            padding: 0.5rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 0.9rem;
+        }
+
+        .filter-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .filter-btn:hover {
+            background: #5a6fd8;
+        }
+
+        .feedback-list {
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .feedback-header {
+            background: #f8f9fa;
+            padding: 1rem 1.5rem;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .feedback-header h3 {
+            color: #333;
+            margin: 0;
+        }
+
+        .feedback-item {
+            padding: 1.5rem;
+            border-bottom: 1px solid #e9ecef;
+            transition: background 0.2s ease;
+        }
+
+        .feedback-item:hover {
+            background: #f8f9fa;
+        }
+
+        .feedback-item:last-child {
+            border-bottom: none;
+        }
+
+        .feedback-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 1rem;
+        }
+
+        .feedback-info {
+            flex: 1;
+        }
+
+        .feedback-text {
+            color: #333;
+            margin-bottom: 1rem;
+            line-height: 1.5;
+        }
+
+        .feedback-tags {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-bottom: 1rem;
+        }
+
+        .tag {
+            padding: 0.25rem 0.75rem;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .tag.sentiment-positive {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .tag.sentiment-negative {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .tag.sentiment-neutral {
+            background: #e2e3e5;
+            color: #383d41;
+        }
+
+        .tag.urgency-high {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .tag.urgency-medium {
+            background: #fff3cd;
+            color: #856404;
+            border: 1px solid #ffeaa7;
+        }
+
+        .tag.urgency-low {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .tag.theme {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .feedback-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .action-btn {
+            padding: 0.5rem 1rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+
+        .action-btn.primary {
+            background: #007bff;
+            color: white;
+        }
+
+        .action-btn.success {
+            background: #28a745;
+            color: white;
+        }
+
+        .action-btn.warning {
+            background: #ffc107;
+            color: #212529;
+        }
+
+        .action-btn:hover {
+            opacity: 0.8;
+        }
+
+        .suggestions {
+            background: #f8f9fa;
+            padding: 1rem;
+            border-radius: 5px;
+            margin-top: 1rem;
+        }
+
+        .suggestions h5 {
+            color: #333;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .suggestions ul {
+            margin: 0;
+            padding-left: 1.5rem;
+        }
+
+        .suggestions li {
+            color: #666;
+            font-size: 0.85rem;
+            margin-bottom: 0.25rem;
+        }
+
+        .no-feedback {
+            text-align: center;
+            padding: 3rem;
+            color: #666;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: #666;
+        }
     </style>
 </head>
 <body>
@@ -129,4 +340,282 @@
                 <h3 id="urgentCount">0</h3>
                 <p>High Urgency Items</p>
             </div>
-            <div class="stat-card ne
+            <div class="stat-card negative">
+                <h3 id="negativeCount">0</h3>
+                <p>Negative Sentiment</p>
+            </div>
+            <div class="stat-card positive">
+                <h3 id="positiveCount">0</h3>
+                <p>Positive Sentiment</p>
+            </div>
+            <div class="stat-card">
+                <h3 id="totalCount">0</h3>
+                <p>Total Feedback</p>
+            </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="filters">
+            <h3>🔍 Filter Feedback</h3>
+            <div class="filter-row">
+                <div class="filter-group">
+                    <label>Sentiment</label>
+                    <select id="sentimentFilter">
+                        <option value="">All Sentiments</option>
+                        <option value="Positive">Positive</option>
+                        <option value="Negative">Negative</option>
+                        <option value="Neutral">Neutral</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Urgency</label>
+                    <select id="urgencyFilter">
+                        <option value="">All Urgency Levels</option>
+                        <option value="High">High</option>
+                        <option value="Medium">Medium</option>
+                        <option value="Low">Low</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Theme</label>
+                    <select id="themeFilter">
+                        <option value="">All Themes</option>
+                        <option value="Workload">Workload</option>
+                        <option value="Management">Management</option>
+                        <option value="Culture">Culture</option>
+                        <option value="Compensation">Compensation</option>
+                        <option value="Benefits">Benefits</option>
+                        <option value="Career Growth">Career Growth</option>
+                        <option value="Work-life Balance">Work-life Balance</option>
+                        <option value="Recognition">Recognition</option>
+                        <option value="Communication">Communication</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Search</label>
+                    <input type="text" id="searchFilter" placeholder="Search feedback...">
+                </div>
+                <button class="filter-btn" onclick="applyFilters()">Apply Filters</button>
+                <button class="filter-btn" onclick="clearFilters()" style="background: #6c757d;">Clear</button>
+            </div>
+        </div>
+
+        <!-- Feedback List -->
+        <div class="feedback-list">
+            <div class="feedback-header">
+                <h3>📋 Feedback Feed</h3>
+            </div>
+            <div id="feedbackList">
+                <div class="loading">Loading feedback...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let allFeedback = [];
+        let filteredFeedback = [];
+
+        // Sample feedback data (in real app, this would come from your API)
+        const sampleFeedback = [
+            {
+                id: 1,
+                text: "I love working here! The team is amazing and I feel valued every day.",
+                timestamp: new Date().toISOString(),
+                employee: "John Employee",
+                sentiment: { label: "Positive", score: 0.95 },
+                urgency: { urgency: "Low", confidence: 0.8, reason: "Positive feedback" },
+                themes: { 
+                    summary: "Positive workplace experience", 
+                    entities: ["team", "workplace"],
+                    classification: { label: "Culture", score: 0.85 }
+                },
+                suggestions: {
+                    suggestions: ["Continue current management practices", "Share positive feedback with team"],
+                    rationale: "Positive feedback indicates good practices"
+                }
+            },
+            {
+                id: 2,
+                text: "I'm being harassed by my manager and need immediate help. This is urgent!",
+                timestamp: new Date(Date.now() - 3600000).toISOString(),
+                employee: "Jane Employee",
+                sentiment: { label: "Negative", score: 0.9 },
+                urgency: { urgency: "High", confidence: 0.95, reason: "Contains harassment keywords" },
+                themes: { 
+                    summary: "Harassment complaint requiring immediate attention", 
+                    entities: ["manager", "harassment"],
+                    classification: { label: "Management", score: 0.9 }
+                },
+                suggestions: {
+                    suggestions: ["Immediate HR investigation required", "Contact employee for detailed statement", "Review harassment policies"],
+                    rationale: "High urgency harassment complaint"
+                }
+            },
+            {
+                id: 3,
+                text: "The workload is too high and I'm feeling overwhelmed. Need better work-life balance.",
+                timestamp: new Date(Date.now() - 7200000).toISOString(),
+                employee: "Bob Employee",
+                sentiment: { label: "Negative", score: 0.7 },
+                urgency: { urgency: "Medium", confidence: 0.75, reason: "Contains stress and workload concerns" },
+                themes: { 
+                    summary: "Workload and work-life balance concerns", 
+                    entities: ["workload", "work-life balance"],
+                    classification: { label: "Workload", score: 0.8 }
+                },
+                suggestions: {
+                    suggestions: ["Review workload distribution", "Implement work-life balance initiatives", "Schedule one-on-one with employee"],
+                    rationale: "Workload and balance concerns"
+                }
+            }
+        ];
+
+        // Initialize dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            loadFeedback();
+        });
+
+        function loadFeedback() {
+            // In real app, fetch from API
+            allFeedback = [...sampleFeedback];
+            filteredFeedback = [...allFeedback];
+            updateStats();
+            renderFeedback();
+        }
+
+        function updateStats() {
+            const urgentCount = allFeedback.filter(f => f.urgency.urgency === 'High').length;
+            const negativeCount = allFeedback.filter(f => f.sentiment.label === 'Negative').length;
+            const positiveCount = allFeedback.filter(f => f.sentiment.label === 'Positive').length;
+            const totalCount = allFeedback.length;
+
+            document.getElementById('urgentCount').textContent = urgentCount;
+            document.getElementById('negativeCount').textContent = negativeCount;
+            document.getElementById('positiveCount').textContent = positiveCount;
+            document.getElementById('totalCount').textContent = totalCount;
+        }
+
+        function renderFeedback() {
+            const feedbackList = document.getElementById('feedbackList');
+            
+            if (filteredFeedback.length === 0) {
+                feedbackList.innerHTML = '<div class="no-feedback">No feedback matches your filters.</div>';
+                return;
+            }
+
+            const html = filteredFeedback.map(feedback => `
+                <div class="feedback-item">
+                    <div class="feedback-meta">
+                        <div class="feedback-info">
+                            <strong>${feedback.employee}</strong>
+                            <span style="color: #666; font-size: 0.9rem; margin-left: 1rem;">
+                                ${new Date(feedback.timestamp).toLocaleString()}
+                            </span>
+                        </div>
+                        <div class="feedback-actions">
+                            <button class="action-btn primary" onclick="viewDetails(${feedback.id})">View Details</button>
+                            <button class="action-btn success" onclick="markResolved(${feedback.id})">Mark Resolved</button>
+                            <button class="action-btn warning" onclick="assignAction(${feedback.id})">Assign Action</button>
+                        </div>
+                    </div>
+                    
+                    <div class="feedback-text">${feedback.text}</div>
+                    
+                    <div class="feedback-tags">
+                        <span class="tag sentiment-${feedback.sentiment.label.toLowerCase()}">
+                            ${feedback.sentiment.label} (${(feedback.sentiment.score * 100).toFixed(0)}%)
+                        </span>
+                        <span class="tag urgency-${feedback.urgency.urgency.toLowerCase()}">
+                            ${feedback.urgency.urgency} Urgency
+                        </span>
+                        ${feedback.themes.classification ? `
+                            <span class="tag theme">
+                                ${feedback.themes.classification.label}
+                            </span>
+                        ` : ''}
+                    </div>
+
+                    ${feedback.suggestions && feedback.suggestions.suggestions ? `
+                        <div class="suggestions">
+                            <h5>💡 AI Recommendations:</h5>
+                            <ul>
+                                ${feedback.suggestions.suggestions.map(s => `<li>${s}</li>`).join('')}
+                            </ul>
+                        </div>
+                    ` : ''}
+                </div>
+            `).join('');
+
+            feedbackList.innerHTML = html;
+        }
+
+        function applyFilters() {
+            const sentimentFilter = document.getElementById('sentimentFilter').value;
+            const urgencyFilter = document.getElementById('urgencyFilter').value;
+            const themeFilter = document.getElementById('themeFilter').value;
+            const searchFilter = document.getElementById('searchFilter').value.toLowerCase();
+
+            filteredFeedback = allFeedback.filter(feedback => {
+                const matchesSentiment = !sentimentFilter || feedback.sentiment.label === sentimentFilter;
+                const matchesUrgency = !urgencyFilter || feedback.urgency.urgency === urgencyFilter;
+                const matchesTheme = !themeFilter || (feedback.themes.classification && feedback.themes.classification.label === themeFilter);
+                const matchesSearch = !searchFilter || feedback.text.toLowerCase().includes(searchFilter);
+
+                return matchesSentiment && matchesUrgency && matchesTheme && matchesSearch;
+            });
+
+            renderFeedback();
+        }
+
+        function clearFilters() {
+            document.getElementById('sentimentFilter').value = '';
+            document.getElementById('urgencyFilter').value = '';
+            document.getElementById('themeFilter').value = '';
+            document.getElementById('searchFilter').value = '';
+            
+            filteredFeedback = [...allFeedback];
+            renderFeedback();
+        }
+
+        function viewDetails(feedbackId) {
+            const feedback = allFeedback.find(f => f.id === feedbackId);
+            if (feedback) {
+                alert(`Detailed View:\n\n${JSON.stringify(feedback, null, 2)}`);
+            }
+        }
+
+        function markResolved(feedbackId) {
+            if (confirm('Mark this feedback as resolved?')) {
+                // In real app, update via API
+                const index = allFeedback.findIndex(f => f.id === feedbackId);
+                if (index !== -1) {
+                    allFeedback.splice(index, 1);
+                    filteredFeedback = [...allFeedback];
+                    updateStats();
+                    renderFeedback();
+                }
+            }
+        }
+
+        function assignAction(feedbackId) {
+            const action = prompt('Assign action for this feedback:');
+            if (action) {
+                alert(`Action assigned: ${action}`);
+                // In real app, save to database
+            }
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                window.location.href = 'login.html';
+            }
+        }
+
+        // Auto-refresh every 30 seconds
+        setInterval(() => {
+            // In real app, fetch new feedback from API
+            console.log('Auto-refreshing feedback...');
+        }, 30000);
+    </script>
+</body>
+</html>
