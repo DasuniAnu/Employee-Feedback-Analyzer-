@@ -28,3 +28,12 @@ try:
     _ld()
 except Exception:
     pass
+
+client = None
+if OpenAI is not None and os.getenv('OPENAI_API_KEY'):
+    client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
+
+app = FastAPI(title='NLP Agent (HF summarization + spaCy, OpenAI fallback)')
+
+class Inp(BaseModel):
+    text: str
