@@ -333,7 +333,7 @@
             status.innerHTML = '<div class="status loading">🔄 Analyzing your feedback with AI...</div>';
             analysisResults.style.display = 'none';
 
-            try {
+            /*try {
                 // Call the orchestrator API
                 const response = await fetch('http://127.0.0.1:8000/analyze', {
                     method: 'POST',
@@ -368,7 +368,7 @@
                 submitBtn.disabled = false;
                 submitBtn.textContent = 'Submit Feedback';
             }
-        });
+        });*/
 
         function displayAnalysisResults(data) {
             const resultsContent = document.getElementById('resultsContent');
