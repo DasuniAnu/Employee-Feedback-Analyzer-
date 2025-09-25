@@ -12,9 +12,9 @@ class SentimentOut(BaseModel):
     score: float
 
 #Summarizes main themes and extracts key entities from feedback.
-class ThemesOut(BaseModel):
-    summary: str
-    entities: List[str]
+#class ThemesOut(BaseModel):
+    #summary: str
+    #entities: List[str]
 
 class SuggestionOut(BaseModel):
     suggestions: List[str]
