@@ -1,4 +1,5 @@
 from fastapi import FastAPI
+from pydantic import BaseModel
 from transformers import pipeline
 
 # Initialize FastAPI app
@@ -6,6 +7,10 @@ app = FastAPI(title="Sentiment Detector Agent")
 
 # Load HuggingFace sentiment model
 sentiment_model = pipeline("sentiment-analysis")
+
+# Define request body
+class Feedback(BaseModel):
+    text: str
 
 @app.get("/")
 def home():
@@ -19,3 +24,4 @@ def analyze_feedback(feedback: str):
         "sentiment": result['label'],
         "score": float(result['score'])
     }
+
