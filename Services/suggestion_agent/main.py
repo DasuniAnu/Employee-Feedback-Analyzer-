@@ -3,17 +3,17 @@ from pydantic import BaseModel
 import os
 from dotenv import load_dotenv
 
-#try:
-    #from openai import OpenAI
-#except Exception:
-    #OpenAI = None
+try:
+    from openai import OpenAI
+except Exception:
+    OpenAI = None
 
-#load_dotenv = lambda: None
-#try:
-    #from dotenv import load_dotenv as _ld
-    #_ld()
-#except Exception:
-    #pass
+load_dotenv = lambda: None
+try:
+    from dotenv import load_dotenv as _ld
+    _ld()
+except Exception:
+    pass
 
 client = None
 if OpenAI is not None and os.getenv('OPENAI_API_KEY'):
