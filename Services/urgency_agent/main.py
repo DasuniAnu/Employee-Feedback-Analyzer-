@@ -116,4 +116,44 @@ async def detect_urgency(inp: Inp):
             try:
                 # Try to parse as JSON
                 data = json.loads(text_response)
-     
+            except Exception:
+                # Try to extract JSON from the response
+                import re
+                match = re.search(r'\{[^}]*\}', text_response)
+                if match:
+                    data = json.loads(match.group(0))
+                else:
+                    raise Exception("No valid JSON found")
+            
+            # Validate the response
+            if isinstance(data, dict) and 'urgency' in data:
+                urgency = data['urgency']
+                confidence = float(data.get('confidence', 0.5))
+                reason = data.get('reason', 'Analyzed by Gemini')
+                
+                # Ensure valid values
+                if urgency not in ['High', 'Medium', 'Low']:
+                    urgency = 'Low'
+                if not 0.0 <= confidence <= 1.0:
+                    confidence = 0.5
+                    
+                return {
+                    'urgency': urgency,
+                    'confidence': confidence,
+                    'reason': reason,
+                    'model_used': 'Gemini'
+                }
+            else:
+                raise Exception("Invalid response format")
+                
+        except Exception as e:
+            print(f"Gemini urgency analysis error: {e}")
+            # Fall back to heuristic
+            return heuristic_urgency(text)
+    
+    # Fallback to heuristic if Gemini is not available
+    return heuristic_urgency(text)
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8007)
