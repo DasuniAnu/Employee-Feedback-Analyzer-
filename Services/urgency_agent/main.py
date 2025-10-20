@@ -1,15 +1,16 @@
 from fastapi import FastAPI
 from pydantic import BaseModel
 import os
+import sys
 from dotenv import load_dotenv
-import torch
+
+# Add project root to Python path
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 try:
-    from transformers import pipeline
-    from huggingface_hub import login
+    import google.generativeai as genai
 except Exception:
-    pipeline = None
-    login = None
+    genai = None
 
 load_dotenv = lambda: None
 try:
@@ -18,7 +19,19 @@ try:
 except Exception:
     pass
 
-app = FastAPI(title='Urgency Agent (HF zero-shot + heuristic)')
+# Configure Gemini API
+gemini_api_key = os.getenv('GOOGLE_API_KEY') or 'AIzaSyC2vCvUu3PL6KtVwWA4ZSaFYf283VMSFUs'
+gemini_model = None
+if genai is not None and gemini_api_key:
+    try:
+        genai.configure(api_key=gemini_api_key)
+        gemini_model = genai.GenerativeModel('gemini-2.0-flash')
+        print("✅ Gemini urgency model loaded successfully!")
+    except Exception as e:
+        print(f"❌ Failed to load Gemini model: {e}")
+        gemini_model = None
+
+app = FastAPI(title='Urgency Agent (Gemini Only)')
 
 class Inp(BaseModel):
     text: str
@@ -47,79 +60,100 @@ def heuristic_urgency(txt: str) -> dict:
     medium_count = sum(1 for word in medium_urgency if word in t)
     
     if high_count > 0:
-        return {'urgency': 'High', 'confidence': min(0.9, 0.6 + (high_count * 0.1)), 'reason': f'Contains {high_count} high-urgency keywords'}
+        return {
+            'urgency': 'High', 
+            'confidence': min(0.9, 0.6 + (high_count * 0.1)), 
+            'reason': f'Contains {high_count} high-urgency keywords',
+            'model_used': 'Rule-based'
+        }
     elif medium_count > 0:
-        return {'urgency': 'Medium', 'confidence': min(0.8, 0.5 + (medium_count * 0.1)), 'reason': f'Contains {medium_count} medium-urgency keywords'}
+        return {
+            'urgency': 'Medium', 
+            'confidence': min(0.8, 0.5 + (medium_count * 0.1)), 
+            'reason': f'Contains {medium_count} medium-urgency keywords',
+            'model_used': 'Rule-based'
+        }
     else:
-        return {'urgency': 'Low', 'confidence': 0.7, 'reason': 'No urgency indicators detected'}
-
-# Initialize Hugging Face zero-shot classifier
-zeroshot = None
-try:
-    if pipeline is not None:
-        hf_token = (
-            os.getenv('HUGGINGFACE_TOKEN')
-            or os.getenv('HUGGINGFACEHUB_API_TOKEN')
-            or os.getenv('HF_TOKEN')
-        )
-        if hf_token and login is not None:
-            try:
-                os.environ['HUGGINGFACEHUB_API_TOKEN'] = hf_token
-                login(token=hf_token)
-            except Exception:
-                pass
-
-        # Use a robust zero-shot model for urgency classification
-        model_name = 'facebook/bart-large-mnli'
-        zeroshot = pipeline(
-            'zero-shot-classification',
-            model=model_name,
-            device=0 if torch.cuda.is_available() else -1
-        )
-        print('Urgency Agent: Hugging Face zero-shot model loaded successfully!')
-except Exception as e:
-    print(f'Urgency Agent: failed to load HF model: {e}')
-    zeroshot = None
+        return {
+            'urgency': 'Low', 
+            'confidence': 0.7, 
+            'reason': 'No urgency indicators detected',
+            'model_used': 'Rule-based'
+        }
 
 @app.post('/detect')
 async def detect_urgency(inp: Inp):
     text = (inp.text or '').strip()
     if not text:
-        return {'urgency': 'Low', 'confidence': 1.0, 'reason': 'Empty input'}
+        return {'urgency': 'Low', 'confidence': 1.0, 'reason': 'Empty input', 'model_used': 'Rule-based'}
 
-    # Try HF zero-shot first
-    if zeroshot is not None:
+    # Try Gemini first
+    if gemini_model is not None:
         try:
-            # Define urgency levels with descriptive labels
-            labels = [
-                'High urgency - requires immediate HR attention',
-                'Medium urgency - needs prompt follow-up',
-                'Low urgency - routine feedback'
-            ]
-            hypothesis_template = 'This feedback indicates {}.'
+            prompt = f"""
+            Analyze the urgency level of the following employee feedback.
             
-            res = zeroshot(text, candidate_labels=labels, hypothesis_template=hypothesis_template)
+            Classify it as:
+            - High urgency: requires immediate HR attention (harassment, discrimination, threats, legal issues, mental health crises)
+            - Medium urgency: needs prompt follow-up (conflicts, stress, complaints, concerns)
+            - Low urgency: routine feedback (general comments, suggestions, normal workplace issues)
             
-            # Map HF results to our urgency levels
-            label = res['labels'][0]
-            score = float(res['scores'][0])
+            Return ONLY a JSON object with:
+            - "urgency": "High", "Medium", or "Low"
+            - "confidence": number between 0.0 and 1.0
+            - "reason": brief explanation
             
-            if 'High urgency' in label:
-                urgency_level = 'High'
-            elif 'Medium urgency' in label:
-                urgency_level = 'Medium'
+            Feedback: "{text}"
+            
+            JSON format:
+            {{"urgency": "Medium", "confidence": 0.75, "reason": "Contains stress-related concerns"}}
+            """
+            
+            response = gemini_model.generate_content(prompt)
+            text_response = (response.text or '').strip()
+            
+            import json
+            try:
+                # Try to parse as JSON
+                data = json.loads(text_response)
+            except Exception:
+                # Try to extract JSON from the response
+                import re
+                match = re.search(r'\{[^}]*\}', text_response)
+                if match:
+                    data = json.loads(match.group(0))
+                else:
+                    raise Exception("No valid JSON found")
+            
+            # Validate the response
+            if isinstance(data, dict) and 'urgency' in data:
+                urgency = data['urgency']
+                confidence = float(data.get('confidence', 0.5))
+                reason = data.get('reason', 'Analyzed by Gemini')
+                
+                # Ensure valid values
+                if urgency not in ['High', 'Medium', 'Low']:
+                    urgency = 'Low'
+                if not 0.0 <= confidence <= 1.0:
+                    confidence = 0.5
+                    
+                return {
+                    'urgency': urgency,
+                    'confidence': confidence,
+                    'reason': reason,
+                    'model_used': 'Gemini'
+                }
             else:
-                urgency_level = 'Low'
-            
-            # Apply confidence threshold - if HF confidence is too low, use heuristic
-            if score < 0.6:
-                return heuristic_urgency(text)
-            
-            reason = f'Hugging Face zero-shot classification (confidence: {score:.2f})'
-            return {'urgency': urgency_level, 'confidence': score, 'reason': reason}
-            
+                raise Exception("Invalid response format")
+                
         except Exception as e:
-            print(f'Urgency Agent: inference error: {e}')
-
-    # Fallback to heuristic
+            print(f"Gemini urgency analysis error: {e}")
+            # Fall back to heuristic
+            return heuristic_urgency(text)
+    
+    # Fallback to heuristic if Gemini is not available
     return heuristic_urgency(text)
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8007)
