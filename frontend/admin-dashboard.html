@@ -1487,7 +1487,43 @@
             renderFeedback();
             showToast(`📌 Assigned to ${person}`, 'info');
             
-            
+            // Send email notification if email provided
+            if (email && email.includes('@')) {
+                const subject = encodeURIComponent(`[URGENT ACTION REQUIRED] Feedback Assignment - ${target.urgency?.urgency || 'Standard'} Priority`);
+                const urgencyLevel = target.urgency?.urgency || 'Standard';
+                const urgencyColor = urgencyLevel === 'High' ? '🔴 HIGH' : urgencyLevel === 'Medium' ? '🟡 MEDIUM' : '🟢 LOW';
+                
+                const bodyLines = [
+                    `Dear ${person},`,
+                    '',
+                    `A feedback has been assigned to you for immediate review and action.`,
+                    '',
+                    `📊 FEEDBACK DETAILS:`,
+                    `• Employee: ${target.employee}`,
+                    `• Theme: ${activeCategory || (target.themes?.classification?.label || 'General')}`,
+                    `• Urgency: ${urgencyColor}`,
+                    `• Sentiment: ${target.sentiment?.label || 'N/A'} (${Math.round((target.sentiment?.score || 0) * 100)}%)`,
+                    `• Date: ${new Date(target.timestamp).toLocaleString()}`,
+                    '',
+                    `📝 FEEDBACK CONTENT:`,
+                    target.text,
+                    '',
+                    `🎯 THEME ANALYSIS:`,
+                    ...(Array.isArray(target.theme_blocks) ? target.theme_blocks.map(b => 
+                        `• ${b.theme}: ${b.sentiment?.label || 'Neutral'} - ${Array.isArray(b.sentences) ? b.sentences.join(' ') : ''}`
+                    ) : []),
+                    '',
+                    `⚡ REQUIRED ACTIONS:`,
+                    `1. Review the feedback thoroughly`,
+                    `2. Contact the employee if necessary`,
+                    `3. Take appropriate action based on the feedback`,
+                    `4. Update the status in the admin dashboard`,
+                    '',
+                    `🔗 Access the admin dashboard to view full details and take action.`,
+                    '',
+                    `Best regards,`,
+                    `HR Management Team`
+                ];
                 
                 const body = encodeURIComponent(bodyLines.join('\n'));
                 window.location.href = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(email)}&su=${subject}&body=${body}`;
