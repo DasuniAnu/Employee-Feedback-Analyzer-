@@ -56,9 +56,135 @@
         }
 
         .container {
-            max-width: 1200px;
+            max-width: 1400px;
             margin: 2rem auto;
             padding: 0 2rem;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .left-panel, .right-panel {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+
+        .section-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 12px;
+            font-size: 1.2rem;
+            font-weight: 700;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+            margin-bottom: 0.5rem;
+        }
+
+        .section-header.filters {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3);
+        }
+
+        .section-header.themes {
+            background: linear-gradient(135deg, #059669 0%, #0d9488 100%);
+            box-shadow: 0 4px 15px rgba(5, 150, 105, 0.3);
+        }
+
+        .theme-header {
+            display: none;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+        .theme-header.active { display: block; }
+        .theme-header-top { 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            gap: 0.5rem; 
+            margin-bottom: 2rem; 
+        }
+        .theme-title { 
+            font-size: 1.5rem; 
+            font-weight: 800; 
+            color: #0f172a; 
+            margin-bottom: 0.25rem;
+        }
+        .theme-sub { 
+            color: #64748b; 
+            font-size: 1rem; 
+            font-weight: 500;
+        }
+        .theme-header-body { 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            gap: 2rem; 
+            margin-top: 0;
+        }
+        .big-pie { 
+            width: 200px; 
+            height: 200px; 
+            border-radius: 50%; 
+            position: relative; 
+            border: 3px solid #f1f5f9; 
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .pie-label { 
+            position: absolute; 
+            transform: translate(-50%, -50%); 
+            background: rgba(255,255,255,0.95); 
+            padding: 4px 8px; 
+            border-radius: 12px; 
+            font-size: 14px; 
+            font-weight: 800; 
+            color: #0f172a; 
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            border: 1px solid rgba(0,0,0,0.1);
+        }
+        .sentiment-buttons { 
+            display: flex; 
+            gap: 0.75rem; 
+            flex-wrap: wrap; 
+            justify-content: center; 
+        }
+        .pill { 
+            padding: 0.75rem 1.5rem; 
+            border-radius: 25px; 
+            border: 2px solid #e5e7eb; 
+            background: linear-gradient(180deg, #f8fafc, #eef2f7); 
+            color: #0f172a; 
+            cursor: pointer; 
+            font-weight: 700; 
+            font-size: 1rem; 
+            letter-spacing: 0.3px;
+            transition: all 0.2s ease;
+        }
+        .pill:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        .pill.active { 
+            box-shadow: 0 0 0 3px #3b82f6 inset; 
+            background: linear-gradient(180deg, #dbeafe, #bfdbfe); 
+            border-color: #3b82f6;
+        }
+        .counts { 
+            color: #475569; 
+            font-size: 1.1rem;
+            font-weight: 600;
         }
 
         .stats-grid {
@@ -102,21 +228,21 @@
         .filters {
             background: white;
             padding: 1.5rem;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            margin-bottom: 2rem;
-        }
-
-        .filters h3 {
-            color: #333;
-            margin-bottom: 1rem;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e5e7eb;
         }
 
         .filter-row {
             display: flex;
+            flex-direction: column;
             gap: 1rem;
-            flex-wrap: wrap;
-            align-items: center;
+        }
+
+        .filter-group-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
         }
 
         .filter-group {
@@ -154,10 +280,61 @@
         }
 
         .feedback-list {
+            background: transparent;
+        }
+
+        .feedback-separator {
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent 0%, #e5e7eb 20%, #cbd5e1 50%, #e5e7eb 80%, transparent 100%);
+            margin: 2rem 0;
+            position: relative;
+        }
+
+        .feedback-separator::before {
+            content: '📋 FEEDBACK FEED';
+            position: absolute;
+            top: -16px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #f5f7fa;
+            padding: 0 2rem;
+            color: #1f2937;
+            font-weight: 800;
+            font-size: 1.2rem;
+            letter-spacing: 1px;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+        }
+
+        .categories {
             background: white;
-            border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
+            border-radius: 12px;
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.08);
+            border: 1px solid #e5e7eb;
+            padding: 1.5rem;
+        }
+
+        .theme-stats-row { display: none; }
+
+        .category-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 0.25rem;
+            padding: 0.35rem 0.75rem;
+            border-radius: 16px;
+            background: linear-gradient(180deg, #eef2ff, #e8ecff);
+            color: #334155;
+            cursor: pointer;
+            font-size: 0.85rem;
+            border: 1px solid #c7d2fe;
+            transition: transform 0.08s ease, background 0.2s ease;
+        }
+
+        .category-chip:hover { transform: translateY(-1px); filter: brightness(1.02); }
+
+        .category-chip.active {
+            background: #c7d2fe;
         }
 
         .feedback-header {
@@ -172,14 +349,39 @@
         }
 
         .feedback-item {
-            padding: 1.5rem;
-            border-bottom: 1px solid #e9ecef;
-            transition: background 0.2s ease;
+            background: white;
+            margin: 1rem 0;
+            padding: 1.25rem 1.25rem 1rem 1.25rem;
+            border: 1px solid #e9ecef;
+            border-radius: 12px;
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
+            transition: box-shadow 0.2s ease, transform 0.05s ease;
+            position: relative;
         }
 
-        .feedback-item:hover {
-            background: #f8f9fa;
+        .feedback-item.new-feedback {
+            border-left: 4px solid #3b82f6;
+            background: linear-gradient(90deg, #eff6ff 0%, #ffffff 10%);
+            animation: slideIn 0.5s ease-out;
         }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .feedback-item.urgency-high {
+            background: #fff5f5;
+            border-color: #fecaca;
+        }
+
+        .feedback-item:hover { box-shadow: 0 10px 24px rgba(0,0,0,0.08); }
 
         .feedback-item:last-child {
             border-bottom: none;
@@ -192,6 +394,9 @@
             margin-bottom: 1rem;
         }
 
+        .feedback-title-row { display: flex; align-items: center; gap: 0.5rem; }
+        .feedback-title-row .dot { width: 6px; height: 6px; border-radius: 50%; background: #cbd5e1; }
+
         .feedback-info {
             flex: 1;
         }
@@ -201,6 +406,10 @@
             margin-bottom: 1rem;
             line-height: 1.5;
         }
+
+        .excerpt { padding: 0.75rem; }
+        .hl-theme { background: #fff3c4; border-radius: 3px; padding: 0 2px; }
+        .theme-excerpt { font-weight: 700; color: #111827; }
 
         .feedback-tags {
             display: flex;
@@ -287,11 +496,22 @@
             opacity: 0.8;
         }
 
+        .resolved-badge { background: #dcfce7; color: #166534; border: 1px solid #bbf7d0; padding: 0.2rem 0.5rem; border-radius: 6px; font-size: 0.75rem; font-weight: 600; }
+        .feedback-item.resolved { 
+            background: linear-gradient(90deg, #f0fdf4 0%, #ffffff 10%);
+            border-left: 4px solid #22c55e;
+            opacity: 0.9;
+        }
+        .feedback-item.resolved:hover {
+            background: linear-gradient(90deg, #ecfdf5 0%, #ffffff 10%);
+        }
+
         .suggestions {
-            background: #f8f9fa;
+            background: #f8fafc;
             padding: 1rem;
-            border-radius: 5px;
+            border-radius: 8px;
             margin-top: 1rem;
+            border: 1px solid #eef2f7;
         }
 
         .suggestions h5 {
@@ -322,15 +542,116 @@
             padding: 2rem;
             color: #666;
         }
+
+        .badge { display: inline-flex; align-items: center; gap: 0.25rem; padding: 0.15rem 0.5rem; border-radius: 999px; font-size: 0.75rem; font-weight: 600; }
+        .badge.positive { background: #e6f9ed; color: #106b35; border: 1px solid #c9efd8; }
+        .badge.negative { background: #fff1f1; color: #8f1d1d; border: 1px solid #ffd7d7; }
+        .badge.neutral { background: #eef2f7; color: #334155; border: 1px solid #e5e7eb; }
+        .badge.clickable { cursor: pointer; }
+        .badge.clickable:hover { filter: brightness(0.95); }
+
+        .filters-row-active { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.5rem; }
+        .filter-pill { background: #eef2f7; color: #334155; border: 1px solid #e5e7eb; padding: 0.25rem 0.5rem; border-radius: 999px; font-size: 0.75rem; }
+
+        /* Modal */
+        .modal-backdrop { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.55); display: none; align-items: center; justify-content: center; padding: 1rem; z-index: 50; }
+        .modal { width: min(900px, 96vw); background: #fff; border-radius: 12px; box-shadow: 0 20px 60px rgba(0,0,0,0.25); overflow: hidden; }
+        .modal-header { display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 1rem; border-bottom: 1px solid #e2e8f0; background: #f8fafc; }
+        .modal-title { font-weight: 600; color: #0f172a; }
+        .modal-body { padding: 1rem; line-height: 1.6; color: #1f2937; }
+        .modal-close { background: #0f172a; color: #fff; border: 0; padding: 0.4rem 0.7rem; border-radius: 8px; cursor: pointer; }
+
+        /* Mini stats row in categories (restored) */
+        .theme-stats-row { display: flex; align-items: center; gap: 1rem; margin-top: 0.75rem; flex-wrap: wrap; }
+        .mini-pie { width: 56px; height: 56px; border-radius: 50%; position: relative; box-shadow: inset 0 0 0 8px rgba(255,255,255,0.7); border: 1px solid #e5e7eb; }
+        .mini-pie::after { content: ""; position: absolute; inset: 10px; background: #fff; border-radius: 50%; }
+        .legend { display: flex; align-items: center; gap: 0.5rem; color: #475569; }
+        .legend .swatch { width: 10px; height: 10px; border-radius: 2px; display: inline-block; }
+        .swatch.pos { background: #22c55e; }
+        .swatch.neg { background: #ef4444; }
+        .swatch.neu { background: #e5e7eb; }
+
+        /* Toast */
+        .toast { position: fixed; right: 16px; bottom: 16px; background: #0f172a; color: #fff; padding: 10px 14px; border-radius: 10px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); opacity: 0; transform: translateY(10px); transition: opacity .2s ease, transform .2s ease; z-index: 60; }
+        .toast.show { opacity: 1; transform: translateY(0); }
+        .toast.success { background: #065f46; }
+        .toast.info { background: #1d4ed8; }
+        .toast.warn { background: #92400e; }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        /* Assigned badge */
+        .assigned-badge { 
+            margin-left: auto; 
+            font-size: 0.8rem; 
+            background: linear-gradient(135deg, #eff6ff, #dbeafe); 
+            color: #1e40af; 
+            border: 2px solid #3b82f6; 
+            padding: 0.4rem 0.8rem; 
+            border-radius: 8px; 
+            font-weight: 600;
+            box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2);
+        }
+
+        /* Dark mode */
+        .dark body { background: #0b1220; }
+        .dark .header { background: #0f172a; color: #e5e7eb; }
+        .dark .header h1 { color: #e5e7eb; }
+        .dark .container { color: #e5e7eb; }
+        .dark .filters, .dark .categories, .dark .feedback-item, .dark .theme-header, .dark .modal { background: #0f172a; border-color: #1f2937; }
+        .dark .feedback-header { background: #0b1220; border-color: #1f2937; }
+        .dark .filter-btn { background: #1d4ed8; }
+        .dark .tag.theme { background: #0ea5e9; color: #022c22; }
+        .dark .feedback-text, .dark .modal-body, .dark .modal-title { color: #e5e7eb; }
+        .dark .action-btn.primary { background: #2563eb; }
+        .dark .action-btn.success { background: #16a34a; }
+        .dark .action-btn.warning { background: #f59e0b; color: #0b1220; }
+        .dark .big-pie { border-color: #1f2937; }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .main-content {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+            
+            .filter-group-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 0 1rem;
+            }
+            
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 1rem;
+            }
+            
+            .section-header {
+                font-size: 1rem;
+                padding: 0.75rem 1rem;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="header">
         <h1>🏢 HR Analytics Dashboard</h1>
         <div class="user-info">
+            <button class="logout-btn" id="notifBell" title="Urgent notifications" onclick="showToast('🚨 High-urgency items: ' + (window.__urgentCount||0), 'warn')">🔔 <span id="notifCount" style="background:#ef4444;color:#fff;border-radius:999px;padding:2px 6px;font-size:12px;">0</span></button>
+            <button class="logout-btn" onclick="document.documentElement.classList.toggle('dark')">Toggle Theme</button>
             <span>Welcome, <strong>HR Admin</strong></span>
             <button class="logout-btn" onclick="logout()">Logout</button>
         </div>
+
+        
     </div>
 
     <div class="container">
@@ -354,57 +675,107 @@
             </div>
         </div>
 
-        <!-- Filters -->
-        <div class="filters">
-            <h3>🔍 Filter Feedback</h3>
-            <div class="filter-row">
-                <div class="filter-group">
-                    <label>Sentiment</label>
-                    <select id="sentimentFilter">
-                        <option value="">All Sentiments</option>
-                        <option value="Positive">Positive</option>
-                        <option value="Negative">Negative</option>
-                        <option value="Neutral">Neutral</option>
-                    </select>
+        <!-- Main Content Area -->
+        <div class="main-content">
+            <!-- Left Panel - Filters -->
+            <div class="left-panel">
+                <div class="section-header filters">
+                    🔍 Filter & Search Feedback
                 </div>
-                <div class="filter-group">
-                    <label>Urgency</label>
-                    <select id="urgencyFilter">
-                        <option value="">All Urgency Levels</option>
-                        <option value="High">High</option>
-                        <option value="Medium">Medium</option>
-                        <option value="Low">Low</option>
-                    </select>
+                <div class="filters">
+                    <div class="filter-row">
+                        <div class="filter-group-row">
+                            <div class="filter-group">
+                                <label>Sentiment</label>
+                                <select id="sentimentFilter">
+                                    <option value="">All Sentiments</option>
+                                    <option value="Positive">Positive</option>
+                                    <option value="Negative">Negative</option>
+                                    <option value="Neutral">Neutral</option>
+                                </select>
+                            </div>
+                            <div class="filter-group">
+                                <label>Urgency</label>
+                                <select id="urgencyFilter">
+                                    <option value="">All Urgency Levels</option>
+                                    <option value="High">High</option>
+                                    <option value="Medium">Medium</option>
+                                    <option value="Low">Low</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="filter-group-row">
+                            <div class="filter-group">
+                                <label>Theme</label>
+                                <select id="themeFilter">
+                                    <option value="">All Themes</option>
+                                    <option value="Workload">Workload</option>
+                                    <option value="Management">Management</option>
+                                    <option value="Culture">Culture</option>
+                                    <option value="Compensation">Compensation</option>
+                                    <option value="Benefits">Benefits</option>
+                                    <option value="Career Growth">Career Growth</option>
+                                    <option value="Work-life Balance">Work-life Balance</option>
+                                    <option value="Recognition">Recognition</option>
+                                    <option value="Communication">Communication</option>
+                                </select>
+                            </div>
+                            <div class="filter-group">
+                                <label>Search</label>
+                                <input type="text" id="searchFilter" placeholder="Search feedback...">
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 0.75rem; margin-top: 0.5rem;">
+                            <button class="filter-btn" onclick="applyFilters()">Apply Filters</button>
+                            <button class="filter-btn" onclick="clearFilters()" style="background: #6c757d;">Clear All</button>
+                        </div>
+                    </div>
                 </div>
-                <div class="filter-group">
-                    <label>Theme</label>
-                    <select id="themeFilter">
-                        <option value="">All Themes</option>
-                        <option value="Workload">Workload</option>
-                        <option value="Management">Management</option>
-                        <option value="Culture">Culture</option>
-                        <option value="Compensation">Compensation</option>
-                        <option value="Benefits">Benefits</option>
-                        <option value="Career Growth">Career Growth</option>
-                        <option value="Work-life Balance">Work-life Balance</option>
-                        <option value="Recognition">Recognition</option>
-                        <option value="Communication">Communication</option>
-                    </select>
+            </div>
+
+            <!-- Right Panel - Theme Categories -->
+            <div class="right-panel">
+                <div class="section-header themes">
+                    🏷️ Theme Categories & Analytics
                 </div>
-                <div class="filter-group">
-                    <label>Search</label>
-                    <input type="text" id="searchFilter" placeholder="Search feedback...">
+                <div class="categories">
+                    <div id="categoryChips" style="margin-bottom: 1rem;"></div>
+                    <div class="theme-stats-row">
+                        <div id="miniPie" class="mini-pie" title="Theme sentiment mix"></div>
+                        <div class="legend"><span class="swatch pos"></span> Positive</div>
+                        <div class="legend"><span class="swatch neg"></span> Negative</div>
+                        <div class="legend"><span class="swatch neu"></span> Neutral</div>
+                        <div id="categoryStats" style="margin-left: 0.5rem; color: #555;"></div>
+                    </div>
                 </div>
-                <button class="filter-btn" onclick="applyFilters()">Apply Filters</button>
-                <button class="filter-btn" onclick="clearFilters()" style="background: #6c757d;">Clear</button>
             </div>
         </div>
 
+        <!-- Selected Theme Header -->
+        <div id="themeHeader" class="theme-header">
+            <div class="theme-header-top">
+                <div>
+                    <div id="themeTitle" class="theme-title">Theme</div>
+                    <div id="themeSub" class="theme-sub"></div>
+                </div>
+                <div class="counts" id="themeCounts"></div>
+            </div>
+            <div class="theme-header-body">
+                <div id="bigPie" class="big-pie" title="Theme sentiment distribution"></div>
+                <div class="sentiment-buttons">
+                    <button class="pill" id="pillAll" onclick="setPill('')">All</button>
+                    <button class="pill" id="pillPos" onclick="setPill('positive')">Positive</button>
+                    <button class="pill" id="pillNeg" onclick="setPill('negative')">Negative</button>
+                </div>
+                <div></div>
+            </div>
+        </div>
+
+        <!-- Feedback Separator -->
+        <div class="feedback-separator"></div>
+
         <!-- Feedback List -->
         <div class="feedback-list">
-            <div class="feedback-header">
-                <h3>📋 Feedback Feed</h3>
-            </div>
             <div id="feedbackList">
                 <div class="loading">Loading feedback...</div>
             </div>
@@ -414,14 +785,19 @@
     <script>
         let allFeedback = [];
         let filteredFeedback = [];
+        let activeCategory = '';
+        let activeCategorySentiment = ''; // 'positive' | 'negative' | ''
+        let highlightFeedbackId = null; // controls modal and highlight
+        let lastFeedbackCount = 0; // track feedback count for new item detection
+        let lastUrgentIds = new Set(); // track urgent item IDs for new urgent detection
 
-        // Sample feedback data (in real app, this would come from your API)
+        // Sample feedback data (kept for empty-state demo; real data pulled from storage)
         const sampleFeedback = [
             {
                 id: 1,
                 text: "I love working here! The team is amazing and I feel valued every day.",
                 timestamp: new Date().toISOString(),
-                employee: "Mr.Krishan Perera",
+                employee: "John Employee",
                 sentiment: { label: "Positive", score: 0.95 },
                 urgency: { urgency: "Low", confidence: 0.8, reason: "Positive feedback" },
                 themes: { 
@@ -432,13 +808,35 @@
                 suggestions: {
                     suggestions: ["Continue current management practices", "Share positive feedback with team"],
                     rationale: "Positive feedback indicates good practices"
-                }
+                },
+                per_theme_sentiment: {
+                    "Workload": { label: "Positive", score: 0.8 },
+                    "Management": { label: "Positive", score: 0.9 },
+                    "Culture": { label: "Positive", score: 0.95 }
+                },
+                theme_blocks: [
+                    {
+                        theme: "Workload",
+                        sentiment: { label: "Positive", score: 0.8 },
+                        sentences: ["The workload is manageable and I feel productive.", "I have a good balance between work and personal life."]
+                    },
+                    {
+                        theme: "Management",
+                        sentiment: { label: "Positive", score: 0.9 },
+                        sentences: ["My manager is supportive and encourages my growth.", "The team is collaborative and we work well together."]
+                    },
+                    {
+                        theme: "Culture",
+                        sentiment: { label: "Positive", score: 0.95 },
+                        sentences: ["The company culture is inclusive and welcoming.", "I feel valued and my contributions are recognized."]
+                    }
+                ]
             },
             {
                 id: 2,
                 text: "I'm being harassed by my manager and need immediate help. This is urgent!",
                 timestamp: new Date(Date.now() - 3600000).toISOString(),
-                employee: "Mrs.Jayaweera L.M",
+                employee: "Jane Employee",
                 sentiment: { label: "Negative", score: 0.9 },
                 urgency: { urgency: "High", confidence: 0.95, reason: "Contains harassment keywords" },
                 themes: { 
@@ -449,13 +847,29 @@
                 suggestions: {
                     suggestions: ["Immediate HR investigation required", "Contact employee for detailed statement", "Review harassment policies"],
                     rationale: "High urgency harassment complaint"
-                }
+                },
+                per_theme_sentiment: {
+                    "Management": { label: "Negative", score: 0.95 },
+                    "Culture": { label: "Negative", score: 0.9 }
+                },
+                theme_blocks: [
+                    {
+                        theme: "Management",
+                        sentiment: { label: "Negative", score: 0.95 },
+                        sentences: ["My manager is verbally abusive and intimidating.", "I feel unsafe in the workplace."]
+                    },
+                    {
+                        theme: "Culture",
+                        sentiment: { label: "Negative", score: 0.9 },
+                        sentences: ["The company culture is toxic and promotes harassment.", "I've lost confidence in the company's ability to protect employees."]
+                    }
+                ]
             },
             {
                 id: 3,
                 text: "The workload is too high and I'm feeling overwhelmed. Need better work-life balance.",
                 timestamp: new Date(Date.now() - 7200000).toISOString(),
-                employee: "Mr.Frenando T.S.K Employee",
+                employee: "Bob Employee",
                 sentiment: { label: "Negative", score: 0.7 },
                 urgency: { urgency: "Medium", confidence: 0.75, reason: "Contains stress and workload concerns" },
                 themes: { 
@@ -466,7 +880,23 @@
                 suggestions: {
                     suggestions: ["Review workload distribution", "Implement work-life balance initiatives", "Schedule one-on-one with employee"],
                     rationale: "Workload and balance concerns"
-                }
+                },
+                per_theme_sentiment: {
+                    "Workload": { label: "Negative", score: 0.7 },
+                    "Work-life Balance": { label: "Negative", score: 0.8 }
+                },
+                theme_blocks: [
+                    {
+                        theme: "Workload",
+                        sentiment: { label: "Negative", score: 0.7 },
+                        sentences: ["The workload is excessive and I'm constantly stressed.", "I feel like I'm never caught up."]
+                    },
+                    {
+                        theme: "Work-life Balance",
+                        sentiment: { label: "Negative", score: 0.8 },
+                        sentences: ["I have no time for personal life and feel burnt out.", "I'm constantly working and never truly relaxing."]
+                    }
+                ]
             }
         ];
 
@@ -475,12 +905,81 @@
             loadFeedback();
         });
 
+        function getStoredFeedback() {
+            try {
+                const raw = localStorage.getItem('efa_feedback');
+                if (!raw) return [];
+                const parsed = JSON.parse(raw);
+                if (!Array.isArray(parsed)) return [];
+                return parsed;
+            } catch (e) {
+                console.warn('Failed to read stored feedback:', e);
+                return [];
+            }
+        }
+
+        function normalize(item) {
+            return {
+                id: item.id || Date.now(),
+                text: item.text || '',
+                timestamp: item.timestamp || new Date().toISOString(),
+                employee: item.employee || 'Employee',
+                sentiment: item.sentiment || { label: 'Neutral', score: 0 },
+                urgency: item.urgency || { urgency: 'Low', confidence: 0, reason: '' },
+                themes: item.themes || {},
+                suggestions: item.suggestions || null,
+                per_theme_sentiment: item.per_theme_sentiment || {},
+                theme_blocks: item.theme_blocks || [],
+                contact_name: item.contact_name || '',
+                contact_email: item.contact_email || ''
+            };
+        }
+
         function loadFeedback() {
-            // In real app, fetch from API
-            allFeedback = [...sampleFeedback];
+            const stored = getStoredFeedback();
+            // Combine stored and sample for a richer demo, with stored first
+            const combined = [...stored.map(normalize), ...sampleFeedback.map(normalize)];
+            
+            // Mark new feedback items
+            const newCount = combined.length - lastFeedbackCount;
+            if (newCount > 0) {
+                // Mark the newest items as new
+                combined.slice(-newCount).forEach(item => {
+                    item.isNew = true;
+                });
+            }
+            
+            allFeedback = combined;
             filteredFeedback = [...allFeedback];
+            lastFeedbackCount = allFeedback.length;
+            
+            // Check for new urgent items
+            const currentUrgentIds = new Set(allFeedback.filter(f => f.urgency?.urgency === 'High').map(f => f.id));
+            const newUrgentIds = [...currentUrgentIds].filter(id => !lastUrgentIds.has(id));
+            lastUrgentIds = currentUrgentIds;
+            
+            // Update notification badge for new urgent items
+            if (newUrgentIds.length > 0) {
+                updateNewUrgentBadge(newUrgentIds.length);
+                showToast(`🚨 ${newUrgentIds.length} NEW urgent feedback received!`, 'warn');
+                playNotificationSound();
+                
+                // Flash the notification bell
+                const bell = document.getElementById('notifBell');
+                if (bell) {
+                    bell.style.animation = 'pulse 0.5s ease-in-out 3';
+                    setTimeout(() => {
+                        bell.style.animation = '';
+                    }, 1500);
+                }
+            } else {
+                updateNotifBadge(allFeedback.filter(f => f.urgency?.urgency === 'High').length);
+            }
+            
             updateStats();
+            renderCategories();
             renderFeedback();
+            updateCharts();
         }
 
         function updateStats() {
@@ -493,6 +992,56 @@
             document.getElementById('negativeCount').textContent = negativeCount;
             document.getElementById('positiveCount').textContent = positiveCount;
             document.getElementById('totalCount').textContent = totalCount;
+            updateNotifBadge(urgentCount);
+        }
+
+        function updateNotifBadge(urgentCount) {
+            const badge = document.getElementById('notifCount');
+            if (badge) {
+                badge.textContent = urgentCount;
+                badge.style.display = urgentCount > 0 ? 'inline' : 'none';
+            }
+            window.__urgentCount = urgentCount;
+        }
+
+        function updateNewUrgentBadge(newUrgentCount) {
+            const badge = document.getElementById('notifCount');
+            if (badge) {
+                if (newUrgentCount > 0) {
+                    badge.textContent = `NEW ${newUrgentCount}`;
+                    badge.style.background = '#dc2626';
+                    badge.style.animation = 'pulse 1s infinite';
+                } else {
+                    badge.textContent = window.__urgentCount || 0;
+                    badge.style.background = '#ef4444';
+                    badge.style.animation = '';
+                }
+                badge.style.display = (window.__urgentCount > 0) ? 'inline' : 'none';
+            }
+        }
+
+        function playNotificationSound() {
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const oscillator = audioContext.createOscillator();
+                const gainNode = audioContext.createGain();
+                
+                oscillator.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                oscillator.frequency.setValueAtTime(800, audioContext.currentTime);
+                oscillator.frequency.setValueAtTime(1000, audioContext.currentTime + 0.1);
+                oscillator.frequency.setValueAtTime(800, audioContext.currentTime + 0.2);
+                
+                gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+                gainNode.gain.linearRampToValueAtTime(0.3, audioContext.currentTime + 0.01);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+                
+                oscillator.start(audioContext.currentTime);
+                oscillator.stop(audioContext.currentTime + 0.5);
+            } catch (e) {
+                console.log('Audio notification not supported');
+            }
         }
 
         function renderFeedback() {
@@ -504,49 +1053,250 @@
             }
 
             const html = filteredFeedback.map(feedback => `
-                <div class="feedback-item">
+                <div class="feedback-item ${feedback.urgency && feedback.urgency.urgency==='High' ? 'urgency-high' : ''} ${feedback.resolved ? 'resolved' : ''} ${feedback.isNew ? 'new-feedback' : ''}">
                     <div class="feedback-meta">
                         <div class="feedback-info">
+                            <div class="feedback-title-row">
                             <strong>${feedback.employee}</strong>
-                            <span style="color: #666; font-size: 0.9rem; margin-left: 1rem;">
+                                <span class="dot"></span>
+                                <span style="color: #64748b; font-size: 0.9rem;">
                                 ${new Date(feedback.timestamp).toLocaleString()}
                             </span>
+                            </div>
                         </div>
                         <div class="feedback-actions">
                             <button class="action-btn primary" onclick="viewDetails(${feedback.id})">View Details</button>
-                            <button class="action-btn success" onclick="markResolved(${feedback.id})">Mark Resolved</button>
+                            <button class="action-btn success" onclick="markResolved(${feedback.id})">${feedback.resolved ? 'Resolved' : 'Mark Resolved'}</button>
                             <button class="action-btn warning" onclick="assignAction(${feedback.id})">Assign Action</button>
+                            ${feedback.assigned_to ? `<span class=\"assigned-badge\">👤 Assigned to: ${escapeHtml(feedback.assigned_to)}${feedback.assigned_at ? ' (' + new Date(feedback.assigned_at).toLocaleDateString() + ')' : ''}</span>` : ''}
+                            ${feedback.resolved ? `<span class=\"resolved-badge\">Resolved</span>` : ''}
                         </div>
                     </div>
                     
-                    <div class="feedback-text">${feedback.text}</div>
+                    ${getDisplayText(feedback)}
                     
                     <div class="feedback-tags">
                         <span class="tag sentiment-${feedback.sentiment.label.toLowerCase()}">
                             ${feedback.sentiment.label} (${(feedback.sentiment.score * 100).toFixed(0)}%)
                         </span>
                         <span class="tag urgency-${feedback.urgency.urgency.toLowerCase()}">
-                            ${feedback.urgency.urgency} Urgency
+                            ${feedback.urgency.urgency} Urgency (${Math.round((feedback.urgency.confidence || 0) * 100)}%)
                         </span>
                         ${feedback.themes.classification ? `
                             <span class="tag theme">
                                 ${feedback.themes.classification.label}
                             </span>
                         ` : ''}
+                        ${feedback.per_theme_sentiment ? Object.entries(feedback.per_theme_sentiment).map(([theme, s]) => `
+                            <span class="tag theme sentiment-${(s.label||'Neutral').toLowerCase()}">
+                                ${theme}: ${s.label}
+                            </span>
+                        `).join('') : ''}
                     </div>
 
-                    ${feedback.suggestions && feedback.suggestions.suggestions ? `
+                    <div class="contact-row" style="display:flex; gap:0.5rem; flex-wrap:wrap; align-items:center; margin: 0.5rem 0 0.25rem 0;">
+                        <input type="text" placeholder="Name (optional)" value="${feedback.contact_name||''}" onchange="updateContact(${feedback.id}, 'contact_name', this.value)" style="flex:1; min-width:160px; padding:0.45rem; border:1px solid #e5e7eb; border-radius:8px;">
+                        <input type="email" placeholder="Email (optional)" value="${feedback.contact_email||''}" onchange="updateContact(${feedback.id}, 'contact_email', this.value)" style="flex:1; min-width:200px; padding:0.45rem; border:1px solid #e5e7eb; border-radius:8px;">
+                        <button class="action-btn warning" onclick="sendEmail(${feedback.id})">Send Email</button>
+                    </div>
+
+                    ${Array.isArray(feedback.theme_blocks) && feedback.theme_blocks.length ? `
                         <div class="suggestions">
-                            <h5>💡 AI Recommendations:</h5>
-                            <ul>
-                                ${feedback.suggestions.suggestions.map(s => `<li>${s}</li>`).join('')}
-                            </ul>
+                            <h5>🧠 Theme Details</h5>
+                            ${feedback.theme_blocks
+                                .filter(b => {
+                                    if (activeCategory && b.theme !== activeCategory) return false;
+                                    if (activeCategorySentiment && (b.sentiment?.label || '').toLowerCase() !== activeCategorySentiment) return false;
+                                    return true;
+                                })
+                                .map(b => `
+                                <div style=\"margin: 0.5rem 0; padding: 0.5rem; border-left: 3px solid;\" class=\"sentiment-${(b.sentiment?.label||'Neutral').toLowerCase()}\">\n
+                                    <div><strong>${b.theme}</strong> — ${(b.sentiment?.label)||'Neutral'} ${(typeof b.sentiment?.score === 'number') ? `(${(b.sentiment.score*100).toFixed(0)}%)` : ''}</div>
+                                    ${Array.isArray(b.sentences) && b.sentences.length ? `
+                                        <ul style=\"margin: 0.25rem 0 0 1rem;\">${b.sentences.map(s => `<li>${s}</li>`).join('')}</ul>
+                                    `: ''}
+                                </div>
+                            `).join('')}
                         </div>
-                    ` : ''}
+                    `: ''}
                 </div>
             `).join('');
 
             feedbackList.innerHTML = html;
+        }
+
+        function renderCategories() {
+            const chips = document.getElementById('categoryChips');
+            const stats = document.getElementById('categoryStats');
+            const miniPie = document.getElementById('miniPie');
+            const themeCounts = {};
+
+            for (const item of allFeedback) {
+                if (item.per_theme_sentiment) {
+                    for (const [theme, s] of Object.entries(item.per_theme_sentiment)) {
+                        if (!themeCounts[theme]) themeCounts[theme] = { positive: 0, negative: 0, neutral: 0 };
+                        const label = (s.label || 'Neutral').toLowerCase();
+                        if (label === 'positive') themeCounts[theme].positive += 1;
+                        else if (label === 'negative') themeCounts[theme].negative += 1;
+                        else themeCounts[theme].neutral += 1;
+                    }
+                }
+            }
+
+            const chipHtml = Object.keys(themeCounts).sort().map(t => {
+                const pos = themeCounts[t].positive;
+                const neg = themeCounts[t].negative;
+                const isActive = activeCategory===t;
+                return `
+                <span class=\"category-chip ${isActive?'active':''}\" onclick=\"selectCategory('${t}')\">
+                    <span>${t}</span>
+                    <span class=\"badge positive clickable\" onclick=\"event.stopPropagation(); selectCategorySentiment('${t}','positive')\">👍 ${pos}</span>
+                    <span class=\"badge negative clickable\" onclick=\"event.stopPropagation(); selectCategorySentiment('${t}','negative')\">👎 ${neg}</span>
+                </span>`;
+            }).join('');
+            chips.innerHTML = chipHtml || '<div style=\"color:#666;\">No categories yet. Submit feedback to generate themes.</div>';
+
+            if (activeCategory && themeCounts[activeCategory]) {
+                const pos = themeCounts[activeCategory].positive;
+                const neg = themeCounts[activeCategory].negative;
+                const neu = themeCounts[activeCategory].neutral;
+                stats.innerHTML = `
+                    <span class=\"filter-pill\">Theme: ${activeCategory}</span>
+                    ${activeCategorySentiment?`<span class=\"filter-pill\">${activeCategorySentiment==='positive'?'Positive 👍':'Negative 👎'}</span>`:''}
+                    <span class=\"badge positive\">👍 ${pos}</span>
+                    <span class=\"badge negative\">👎 ${neg}</span>
+                    <span class=\"badge neutral\">≈ ${neu}</span>
+                `;
+
+                // restore mini pie background
+                const total = Math.max(1, pos + neg + neu);
+                const pPos = (pos / total) * 360;
+                const pNeg = (neg / total) * 360;
+                if (miniPie) miniPie.style.background = `conic-gradient(#22c55e 0deg ${pPos}deg, #ef4444 ${pPos}deg ${pPos+pNeg}deg, #e5e7eb ${pPos+pNeg}deg 360deg)`;
+
+                // Update selected theme header
+                updateThemeHeader(activeCategory, {pos, neg, neu});
+            } else {
+                stats.textContent = '';
+                if (miniPie) miniPie.style.background = '#e5e7eb';
+                updateThemeHeader('', {pos:0,neg:0,neu:0});
+            }
+        }
+
+        function getDisplayText(feedback) {
+            if (activeCategory) {
+                const blocks = Array.isArray(feedback.theme_blocks) ? feedback.theme_blocks : [];
+                const filtered = blocks.filter(b => {
+                    if (b.theme !== activeCategory) return false;
+                    if (activeCategorySentiment && (b.sentiment?.label || '').toLowerCase() !== activeCategorySentiment) return false;
+                    return true;
+                });
+                const sentences = filtered.flatMap(b => Array.isArray(b.sentences) ? b.sentences : []);
+                if (sentences.length) {
+                    const safe = sentences.map(s => escapeHtml(s)).join(' ');
+                    return `<div class="feedback-text theme-excerpt">${safe}</div>`;
+                }
+            }
+            return `<div class=\"feedback-text\">${escapeHtml(feedback.text)}</div>`;
+        }
+
+        function updateThemeHeader(theme, counts) {
+            const header = document.getElementById('themeHeader');
+            if (!theme) { header.classList.remove('active'); return; }
+            header.classList.add('active');
+            document.getElementById('themeTitle').textContent = `${theme} Feedback`;
+            document.getElementById('themeSub').textContent = 'View theme-specific feedback with sentiment filters';
+            document.getElementById('themeCounts').innerHTML = `
+                <span class=\"badge positive\">👍 ${counts.pos}</span>
+                <span class=\"badge negative\">👎 ${counts.neg}</span>
+                <span class=\"badge neutral\">≈ ${counts.neu}</span>
+            `;
+
+            const total = Math.max(1, counts.pos + counts.neg + counts.neu);
+            const pPos = (counts.pos / total) * 360;
+            const pNeg = (counts.neg / total) * 360;
+            const bigPie = document.getElementById('bigPie');
+            bigPie.innerHTML = '';
+            bigPie.style.background = `conic-gradient(#22c55e 0deg ${pPos}deg, #ef4444 ${pPos}deg ${pPos+pNeg}deg, #e5e7eb ${pPos+pNeg}deg 360deg)`;
+
+            // Add percentage labels inside the pie chart
+            const labels = [];
+            const percPos = Math.round((counts.pos/total)*100);
+            const percNeg = Math.round((counts.neg/total)*100);
+            const percNeu = Math.round((counts.neu/total)*100);
+
+            const arcs = [
+                { start: 0, sweep: pPos, color: '#22c55e', label: `${percPos}%` },
+                { start: pPos, sweep: pNeg, color: '#ef4444', label: `${percNeg}%` },
+                { start: pPos + pNeg, sweep: 360 - (pPos + pNeg), color: '#e5e7eb', label: `${percNeu}%` },
+            ];
+
+            arcs.forEach(a => {
+                if (a.sweep <= 0 || (a.label === '0%')) return;
+                const angle = a.start + a.sweep/2; // middle of arc
+                const r = 45; // radius for label placement (inside the pie)
+                const cx = 100; const cy = 100; // center for 200x200
+                const rad = angle * Math.PI / 180;
+                const x = cx + r * Math.cos(rad);
+                const y = cy + r * Math.sin(rad);
+                const span = document.createElement('span');
+                span.className = 'pie-label';
+                span.style.left = x + 'px';
+                span.style.top = y + 'px';
+                span.textContent = a.label;
+                bigPie.appendChild(span);
+            });
+
+            // Update button active states
+            document.getElementById('pillAll').classList.toggle('active', !activeCategorySentiment);
+            document.getElementById('pillPos').classList.toggle('active', activeCategorySentiment==='positive');
+            document.getElementById('pillNeg').classList.toggle('active', activeCategorySentiment==='negative');
+        }
+
+        function setPill(sentiment) {
+            activeCategorySentiment = sentiment;
+            // Clear global filters
+            try {
+                document.getElementById('sentimentFilter').value = '';
+                document.getElementById('urgencyFilter').value = '';
+                document.getElementById('themeFilter').value = '';
+                document.getElementById('searchFilter').value = '';
+            } catch {}
+            renderCategories();
+            applyFilters();
+        }
+
+        function selectCategory(theme) {
+            const toggledOff = (theme === activeCategory);
+            activeCategory = toggledOff ? '' : theme;
+            if (toggledOff) activeCategorySentiment = '';
+            // Clear conflicting global filters when switching category
+            if (!toggledOff) {
+                try {
+                    document.getElementById('sentimentFilter').value = '';
+                    document.getElementById('urgencyFilter').value = '';
+                    document.getElementById('themeFilter').value = '';
+                    document.getElementById('searchFilter').value = '';
+                } catch {}
+            }
+            renderCategories();
+            applyFilters();
+        }
+
+        function selectCategorySentiment(theme, sentiment) {
+            if (activeCategory !== theme) {
+                activeCategory = theme;
+            }
+            activeCategorySentiment = (activeCategorySentiment === sentiment) ? '' : sentiment; // toggle
+            // Clear conflicting global filters when choosing per-theme sentiment
+            try {
+                document.getElementById('sentimentFilter').value = '';
+                document.getElementById('urgencyFilter').value = '';
+                document.getElementById('themeFilter').value = '';
+                document.getElementById('searchFilter').value = '';
+            } catch {}
+            renderCategories();
+            applyFilters();
         }
 
         function applyFilters() {
@@ -556,15 +1306,22 @@
             const searchFilter = document.getElementById('searchFilter').value.toLowerCase();
 
             filteredFeedback = allFeedback.filter(feedback => {
-                const matchesSentiment = !sentimentFilter || feedback.sentiment.label === sentimentFilter;
+                // When filtering by a theme sentiment, ignore global overall sentiment filter
+                const matchesSentiment = activeCategorySentiment ? true : (!sentimentFilter || feedback.sentiment.label === sentimentFilter);
                 const matchesUrgency = !urgencyFilter || feedback.urgency.urgency === urgencyFilter;
                 const matchesTheme = !themeFilter || (feedback.themes.classification && feedback.themes.classification.label === themeFilter);
+                const matchesCategory = !activeCategory || (feedback.per_theme_sentiment && Object.keys(feedback.per_theme_sentiment).includes(activeCategory));
+                const matchesCategorySentiment = !activeCategorySentiment || (
+                    activeCategory && feedback.per_theme_sentiment && feedback.per_theme_sentiment[activeCategory] &&
+                    (feedback.per_theme_sentiment[activeCategory].label || '').toLowerCase() === activeCategorySentiment
+                );
                 const matchesSearch = !searchFilter || feedback.text.toLowerCase().includes(searchFilter);
 
-                return matchesSentiment && matchesUrgency && matchesTheme && matchesSearch;
+                return matchesSentiment && matchesUrgency && matchesTheme && matchesCategory && matchesCategorySentiment && matchesSearch;
             });
 
             renderFeedback();
+            saveFilters();
         }
 
         function clearFilters() {
@@ -572,36 +1329,170 @@
             document.getElementById('urgencyFilter').value = '';
             document.getElementById('themeFilter').value = '';
             document.getElementById('searchFilter').value = '';
+            activeCategory = '';
             
             filteredFeedback = [...allFeedback];
+            renderCategories();
             renderFeedback();
+            saveFilters();
         }
 
         function viewDetails(feedbackId) {
             const feedback = allFeedback.find(f => f.id === feedbackId);
-            if (feedback) {
-                alert(`Detailed View:\n\n${JSON.stringify(feedback, null, 2)}`);
+            if (!feedback) return;
+            highlightFeedbackId = feedbackId;
+            const modal = ensureModal();
+            const targetTheme = activeCategory || (feedback.themes?.classification?.label || '');
+            const blocks = Array.isArray(feedback.theme_blocks) ? feedback.theme_blocks : [];
+            const themedBlocks = targetTheme ? blocks.filter(b => b.theme === targetTheme) : blocks;
+
+            const highlightedText = highlightThemeInText(feedback.text, themedBlocks);
+            const who = `${feedback.employee}${feedback.contact_email? ' • ' + feedback.contact_email : ''}`;
+            modal.querySelector('.modal-title').textContent = `${who} — ${new Date(feedback.timestamp).toLocaleString()}`;
+            modal.querySelector('.modal-body').innerHTML = `<div>${highlightedText}</div>`;
+            modal.style.display = 'flex';
+        }
+
+        function ensureModal() {
+            let backdrop = document.getElementById('modalBackdrop');
+            if (!backdrop) {
+                backdrop = document.createElement('div');
+                backdrop.id = 'modalBackdrop';
+                backdrop.className = 'modal-backdrop';
+                backdrop.innerHTML = `
+                    <div class="modal">
+                        <div class="modal-header">
+                            <div class="modal-title">Details</div>
+                            <button class="modal-close" onclick="closeModal()">Close</button>
+                        </div>
+                        <div class="modal-body"></div>
+                    </div>
+                `;
+                document.body.appendChild(backdrop);
+                backdrop.addEventListener('click', (e) => { if (e.target === backdrop) closeModal(); });
             }
+            return backdrop;
+        }
+
+        function closeModal() {
+            const backdrop = document.getElementById('modalBackdrop');
+            if (backdrop) backdrop.style.display = 'none';
+        }
+
+        function showToast(msg, type='info') {
+            let t = document.getElementById('toast');
+            if (!t) {
+                t = document.createElement('div');
+                t.id = 'toast';
+                t.className = 'toast';
+                document.body.appendChild(t);
+            }
+            t.className = 'toast show ' + (type==='success'?'success':type==='warn'?'warn':'info');
+            t.textContent = msg;
+            setTimeout(() => { t.classList.remove('show'); }, 1800);
+        }
+
+        function highlightThemeInText(text, blocks) {
+            if (!blocks || !blocks.length) return escapeHtml(text);
+            const sentences = splitIntoSentences(text);
+            const highlightSet = new Set();
+            for (const b of blocks) {
+                if (Array.isArray(b.sentences)) {
+                    for (const s of b.sentences) highlightSet.add(s.trim());
+                }
+            }
+            return sentences.map(s => {
+                const trimmed = s.trim();
+                const isHit = highlightSet.has(trimmed);
+                return isHit ? `<span class=\"hl-theme\">${escapeHtml(s)}</span>` : escapeHtml(s);
+            }).join(' ');
+        }
+
+        function splitIntoSentences(text) {
+            // naive split; good enough for demo
+            return text.split(/(?<=[.!?])\s+/);
+        }
+
+        function escapeHtml(str) {
+            return str.replace(/[&<>\"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','\"':'&quot;'}[c]));
         }
 
         function markResolved(feedbackId) {
-            if (confirm('Mark this feedback as resolved?')) {
-                // In real app, update via API
-                const index = allFeedback.findIndex(f => f.id === feedbackId);
-                if (index !== -1) {
-                    allFeedback.splice(index, 1);
-                    filteredFeedback = [...allFeedback];
-                    updateStats();
-                    renderFeedback();
+            if (!confirm('Mark this feedback as resolved?')) return;
+            const f = allFeedback.find(x => x.id === feedbackId);
+            if (!f) return;
+            f.resolved = true;
+            f.resolvedAt = new Date().toISOString();
+            try { localStorage.setItem('efa_feedback', JSON.stringify(allFeedback)); } catch {}
+            renderFeedback();
+            updateStats();
+            showToast('✅ Feedback marked as resolved', 'success');
+            
+            // Add visual feedback - briefly highlight the resolved item
+            setTimeout(() => {
+                const feedbackElement = document.querySelector(`[onclick*="markResolved(${feedbackId})"]`).closest('.feedback-item');
+                if (feedbackElement) {
+                    feedbackElement.style.transition = 'all 0.3s ease';
+                    feedbackElement.style.transform = 'scale(1.02)';
+                    setTimeout(() => {
+                        feedbackElement.style.transform = 'scale(1)';
+                    }, 300);
                 }
+            }, 100);
+        }
+
+        function updateContact(id, key, value) {
+            const f = allFeedback.find(x => x.id === id);
+            if (!f) return;
+            f[key] = value;
+            try { localStorage.setItem('efa_feedback', JSON.stringify(allFeedback)); } catch {}
+        }
+
+        function sendEmail(id) {
+            const f = allFeedback.find(x => x.id === id);
+            if (!f) return;
+            const to = (f.contact_email || '').trim();
+            const subject = encodeURIComponent(`[HR Feedback][${activeCategory||'General'}] Follow-up`);
+            const bodyLines = [];
+            bodyLines.push(`Hello${f.contact_name? ' ' + f.contact_name : ''},`);
+            bodyLines.push('');
+            bodyLines.push('We are following up regarding your feedback:');
+            const themeBlocks = Array.isArray(f.theme_blocks) ? f.theme_blocks : [];
+            const selectedBlocks = activeCategory ? themeBlocks.filter(b => b.theme === activeCategory) : themeBlocks;
+            const excerpt = selectedBlocks.flatMap(b => Array.isArray(b.sentences)? b.sentences : []).join(' ');
+            bodyLines.push(excerpt || f.text);
+            bodyLines.push('');
+            bodyLines.push('Best regards,');
+            bodyLines.push('HR Team');
+            const body = encodeURIComponent(bodyLines.join('\n'));
+            if (to) {
+                window.location.href = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(to)}&su=${subject}&body=${body}`;
+            } else {
+                window.location.href = `mailto:?subject=${subject}&body=${body}`;
             }
         }
 
         function assignAction(feedbackId) {
-            const action = prompt('Assign action for this feedback:');
-            if (action) {
-                alert(`Action assigned: ${action}`);
-                // In real app, save to database
+            const current = allFeedback.find(f => f.id === feedbackId);
+            const person = prompt('Assign to (e.g., ABC Manager):', current?.assigned_to || '');
+            if (!person) return;
+            const email = prompt('Assigned person email (required for notification):', current?.assigned_email || '');
+            const target = allFeedback.find(f => f.id === feedbackId);
+            if (target) {
+                target.assigned_to = person;
+                target.assigned_email = email;
+                target.assigned_at = new Date().toISOString();
+                try { localStorage.setItem('efa_feedback', JSON.stringify(allFeedback)); } catch {}
+            }
+            renderFeedback();
+            showToast(`📌 Assigned to ${person}`, 'info');
+            
+            
+                
+                const body = encodeURIComponent(bodyLines.join('\n'));
+                window.location.href = `https://mail.google.com/mail/?view=cm&fs=1&to=${encodeURIComponent(email)}&su=${subject}&body=${body}`;
+            } else {
+                showToast('⚠️ No email provided - assignment saved but no notification sent', 'warn');
             }
         }
 
@@ -611,11 +1502,74 @@
             }
         }
 
-        // Auto-refresh every 30 seconds
+        function isAnyFilterActive() {
+            const sentimentFilter = document.getElementById('sentimentFilter').value;
+            const urgencyFilter = document.getElementById('urgencyFilter').value;
+            const themeFilter = document.getElementById('themeFilter').value;
+            const searchFilter = document.getElementById('searchFilter').value.trim();
+            return Boolean(sentimentFilter || urgencyFilter || themeFilter || searchFilter || activeCategory);
+        }
+
+        function saveFilters() {
+            const payload = {
+                sentiment: document.getElementById('sentimentFilter').value,
+                urgency: document.getElementById('urgencyFilter').value,
+                theme: document.getElementById('themeFilter').value,
+                search: document.getElementById('searchFilter').value,
+                activeCategory
+            };
+            try { localStorage.setItem('efa_admin_filters', JSON.stringify(payload)); } catch {}
+        }
+
+        function restoreFilters() {
+            try {
+                const raw = localStorage.getItem('efa_admin_filters');
+                if (!raw) return;
+                const f = JSON.parse(raw);
+                if (!f) return;
+                document.getElementById('sentimentFilter').value = f.sentiment || '';
+                document.getElementById('urgencyFilter').value = f.urgency || '';
+                document.getElementById('themeFilter').value = f.theme || '';
+                document.getElementById('searchFilter').value = f.search || '';
+                activeCategory = f.activeCategory || '';
+            } catch {}
+        }
+
+        
+
+        restoreFilters();
+        applyFilters();
+        // Initialize urgent badge and detect new urgent feedback
+        (function initUrgencyNotify(){
+            let seen = [];
+            try { seen = JSON.parse(localStorage.getItem('efa_urgent_seen')||'[]'); } catch {}
+            const urgent = allFeedback.filter(f=>f.urgency?.urgency==='High');
+            localStorage.setItem('efa_urgent_seen', JSON.stringify(urgent.map(f=>f.id)));
+            updateNotifBadge(urgent.length);
+        })();
+        // Auto-refresh every 3 seconds to check for new feedback
         setInterval(() => {
-            // In real app, fetch new feedback from API
-            console.log('Auto-refreshing feedback...');
-        }, 30000);
+            loadFeedback();
+        }, 3000);
+        window.addEventListener('storage', (e) => {
+            if (e.key === 'efa_feedback') {
+                const prevFilters = {
+                    sentiment: document.getElementById('sentimentFilter').value,
+                    urgency: document.getElementById('urgencyFilter').value,
+                    theme: document.getElementById('themeFilter').value,
+                    search: document.getElementById('searchFilter').value,
+                    activeCategory
+                };
+                loadFeedback();
+                document.getElementById('sentimentFilter').value = prevFilters.sentiment;
+                document.getElementById('urgencyFilter').value = prevFilters.urgency;
+                document.getElementById('themeFilter').value = prevFilters.theme;
+                document.getElementById('searchFilter').value = prevFilters.search;
+                activeCategory = prevFilters.activeCategory;
+                applyFilters();
+                // The urgent notification is now handled in loadFeedback()
+            }
+        });
     </script>
 </body>
 </html>
