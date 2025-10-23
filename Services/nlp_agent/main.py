@@ -3,18 +3,12 @@ from pydantic import BaseModel
 import os
 from dotenv import load_dotenv
 import torch
+from typing import Dict, List
 
 try:
-    from openai import OpenAI
+    import google.generativeai as genai
 except Exception:
-    OpenAI = None
-
-try:
-    from transformers import pipeline
-    from huggingface_hub import login
-except Exception:
-    pipeline = None
-    login = None
+    genai = None
 
 try:
     import spacy
@@ -29,97 +23,146 @@ try:
 except Exception:
     pass
 
-client = None
-if OpenAI is not None and os.getenv('OPENAI_API_KEY'):
-    client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
+gemini_api_key = os.getenv('GOOGLE_API_KEY') or 'AIzaSyC2vCvUu3PL6KtVwWA4ZSaFYf283VMSFUs'
+gemini_model = None
+if genai is not None and gemini_api_key:
+    try:
+        genai.configure(api_key=gemini_api_key)
+        gemini_model = genai.GenerativeModel('gemini-2.0-flash')
+    except Exception:
+        gemini_model = None
 
-app = FastAPI(title='NLP Agent (HF summarization + spaCy, OpenAI fallback)')
+app = FastAPI(title='NLP Agent (Gemini Only)')
 
 class Inp(BaseModel):
     text: str
 
-# Optional: Zero-shot classifier for theme labeling (configurable)
-classifier = None
-classifier_labels: list[str] = []
-classifier_model_name = os.getenv('NLP_CLASSIFIER_MODEL', 'facebook/bart-large-mnli')
-labels_env = os.getenv('NLP_CLASSIFIER_LABELS', '')
-if labels_env:
-    classifier_labels = [lbl.strip() for lbl in labels_env.split(',') if lbl.strip()]
-else:
-    # Reasonable defaults; override with NLP_CLASSIFIER_LABELS
-    classifier_labels = [
-        'Compensation', 'Workload', 'Management', 'Culture', 'Benefits',
-        'Career Growth', 'Work-life Balance', 'Recognition', 'Communication', 'Other'
-    ]
+# Theme classification labels
+classifier_labels = [
+    'Compensation', 'Workload', 'Management', 'Culture', 'Benefits',
+    'Career Growth', 'Work-life Balance', 'Recognition', 'Communication', 'Other'
+]
 
-try:
-    if pipeline is not None and classifier_labels:
-        hf_token = (
-            os.getenv('HUGGINGFACE_TOKEN')
-            or os.getenv('HUGGINGFACEHUB_API_TOKEN')
-            or os.getenv('HF_TOKEN')
-        )
-        if hf_token and login is not None:
-            try:
-                os.environ['HUGGINGFACEHUB_API_TOKEN'] = hf_token
-                login(token=hf_token)
-            except Exception:
-                pass
+def _normalize_theme(raw: str) -> str:
+    key = (raw or '').strip().lower()
+    # Map common variants to canonical labels
+    if any(k in key for k in ['salary', 'pay', 'compensation', 'bonus']):
+        return 'Compensation'
+    if any(k in key for k in ['manager', 'lead', 'supervisor', 'leadership']):
+        return 'Management'
+    if any(k in key for k in ['hr', 'human resources']):
+        return 'HR'
+    if any(k in key for k in ['workload', 'overtime', 'hours', 'deadline', 'pressure']):
+        return 'Workload'
+    if any(k in key for k in ['benefit', 'health', 'insurance', 'perk']):
+        return 'Benefits'
+    if any(k in key for k in ['culture', 'environment', 'inclusive', 'toxic', 'diversity', 'company culture']):
+        return 'Culture'
+    if any(k in key for k in ['career', 'promotion', 'growth', 'development']):
+        return 'Career Growth'
+    if any(k in key for k in ['work-life', 'balance', 'flexible', 'remote']):
+        return 'Work-life Balance'
+    if any(k in key for k in ['recognition', 'appreciation', 'credit']):
+        return 'Recognition'
+    if any(k in key for k in ['communication', 'transparenc', 'communicat']):
+        return 'Communication'
+    return 'Other'
 
-        classifier = pipeline(
-            'zero-shot-classification',
-            model=classifier_model_name,
-            device=0 if torch.cuda.is_available() else -1
+def _split_by_themes_with_rules(text: str) -> Dict[str, List[str]]:
+    themes_map: Dict[str, List[str]] = {
+        'Compensation': [], 'Management': [], 'HR': [], 'Workload': [], 'Culture': [], 'Benefits': [],
+        'Career Growth': [], 'Work-life Balance': [], 'Recognition': [], 'Communication': [], 'Other': []
+    }
+    # naive sentence split by punctuation
+    import re
+    sentences = [s.strip() for s in re.split(r'[.!?]+', text) if s.strip()]
+    for s in sentences:
+        normalized = _normalize_theme(s)
+        themes_map.setdefault(normalized, []).append(s)
+    # remove empty lists
+    return {k: v for k, v in themes_map.items() if v}
+
+def _gemini_theme_split(text: str) -> Dict[str, List[str]]:
+    if gemini_model is None:
+        return {}
+    try:
+        prompt = (
+            "Split the feedback into sentences and group them by HR-related themes. "
+            "Return ONLY JSON with keys as themes and values as arrays of sentences. "
+            "Use concise theme names like Compensation, Management, HR, Workload, Culture, Benefits, "
+            "Career Growth, Work-life Balance, Recognition, Communication, Other.\n\nFeedback:\n" + text
         )
-except Exception:
-    classifier = None
+        resp = gemini_model.generate_content(prompt)
+        import json, re
+        txt = (resp.text or '').strip()
+        try:
+            data = json.loads(txt)
+        except Exception:
+            m = re.search(r"\{[\s\S]*\}", txt)
+            data = json.loads(m.group(0)) if m else {}
+        # ensure list-of-strings and normalize keys
+        out: Dict[str, List[str]] = {}
+        for k, v in (data.items() if isinstance(data, dict) else []):
+            if isinstance(v, list):
+                canon = _normalize_theme(k)
+                out.setdefault(canon, [])
+                out[canon].extend([str(s).strip() for s in v if str(s).strip()])
+        return out
+    except Exception:
+        return {}
+
+def _gemini_classify_theme(text: str) -> Dict:
+    """Use Gemini for theme classification"""
+    if gemini_model is None:
+        return {}
+    try:
+        prompt = f"""
+        Classify the following employee feedback into one of these HR themes: {', '.join(classifier_labels)}
+        
+        Return ONLY a JSON object with:
+        - "label": the best matching theme
+        - "score": confidence score (0.0-1.0)
+        - "scores": object with all theme scores
+        
+        Feedback: "{text}"
+        
+        JSON format:
+        {{"label": "Compensation", "score": 0.85, "scores": {{"Compensation": 0.85, "Management": 0.1, ...}}}}
+        """
+        
+        resp = gemini_model.generate_content(prompt)
+        import json, re
+        txt = (resp.text or '').strip()
+        try:
+            data = json.loads(txt)
+        except Exception:
+            m = re.search(r"\{[\s\S]*\}", txt)
+            data = json.loads(m.group(0)) if m else {}
+        
+        if isinstance(data, dict) and 'label' in data:
+            return {
+                'label': data.get('label', 'Other'),
+                'score': float(data.get('score', 0.5)),
+                'scores': data.get('scores', {}),
+                'model': 'Gemini'
+            }
+    except Exception:
+        pass
+    return {}
 
 @app.post('/themes')
 async def themes(inp: Inp):
     summary = ''
 
-    # Prefer Hugging Face summarization if available
-    used_hf = False
-    if pipeline is not None:
-        try:
-            hf_token = (
-                os.getenv('HUGGINGFACE_TOKEN')
-                or os.getenv('HUGGINGFACEHUB_API_TOKEN')
-                or os.getenv('HF_TOKEN')
-            )
-            if hf_token and login is not None:
-                try:
-                    os.environ['HUGGINGFACEHUB_API_TOKEN'] = hf_token
-                    login(token=hf_token)
-                except Exception:
-                    pass
-
-            summarizer = pipeline(
-                'summarization',
-                model='sshleifer/distilbart-cnn-12-6',
-                device=0 if torch.cuda.is_available() else -1
-            )
-            # Keep it to a single concise sentence
-            result = summarizer(inp.text, max_length=40, min_length=8, do_sample=False)
-            summary = (result[0]['summary_text'] or '').strip()
-            used_hf = True
-        except Exception:
-            used_hf = False
-
-    # If HF unavailable, try OpenAI
-    if not used_hf and client is not None:
+    # Use Gemini for summarization
+    if gemini_model is not None:
         try:
             prompt = (
                 "Summarize the main themes of the following employee feedback in 1 concise sentence.\n\n"
-                + inp.text
-                + "\n\nReturn only the summary sentence."
+                + inp.text + "\n\nReturn only the sentence."
             )
-            resp = client.chat.completions.create(
-                model='gpt-4o-mini',
-                messages=[{'role':'user','content':prompt}],
-                temperature=0.2
-            )
-            summary = (resp.choices[0].message.content or '').strip()
+            r = gemini_model.generate_content(prompt)
+            summary = (r.text or '').strip()
         except Exception:
             summary = inp.text[:140]
 
@@ -127,6 +170,7 @@ async def themes(inp: Inp):
     if not summary:
         summary = inp.text[:140]
 
+    # Extract entities using spaCy
     ents = []
     if nlp is not None:
         try:
@@ -134,22 +178,33 @@ async def themes(inp: Inp):
             ents = sorted({ent.text for ent in doc.ents})
         except Exception:
             ents = []
-    classification = {}
-    if classifier is not None and classifier_labels:
-        try:
-            # Use a simple template; configurable via env in the future if needed
-            res = classifier(inp.text, candidate_labels=classifier_labels, hypothesis_template='This feedback is about {}.')
-            # Build scores map
-            scores_map = {label: float(score) for label, score in zip(res['labels'], res['scores'])}
-            top_label = res['labels'][0] if res.get('labels') else ''
-            top_score = float(res['scores'][0]) if res.get('scores') else 0.0
-            classification = {
-                'label': top_label,
-                'score': top_score,
-                'scores': scores_map,
-                'model': classifier_model_name
-            }
-        except Exception:
-            classification = {}
 
-    return {'summary': summary, 'entities': ents, 'classification': classification}
+    # Use Gemini for theme classification
+    classification = _gemini_classify_theme(inp.text)
+    if not classification:
+        # Fallback to rule-based classification
+        classification = {
+            'label': 'Other',
+            'score': 0.5,
+            'scores': {},
+            'model': 'Rule-based'
+        }
+
+    # Theme-based sentence grouping: prefer Gemini, fallback to rules
+    theme_sentences = _gemini_theme_split(inp.text)
+    theme_source = "Gemini" if theme_sentences else "Rule-based"
+    if not theme_sentences:
+        theme_sentences = _split_by_themes_with_rules(inp.text)
+
+    return {
+        'summary': summary, 
+        'entities': ents, 
+        'classification': classification, 
+        'theme_sentences': theme_sentences,
+        'theme_source': theme_source,
+        'gemini_available': gemini_model is not None
+    }
+
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8002)
