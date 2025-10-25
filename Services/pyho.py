@@ -80,6 +80,8 @@ def generate_feedback(n: int = 10) -> List[Feedback]:
     return items
 
 
+
+
 def summarize(feedbacks: List[Feedback]) -> Dict:
     """Return a brief summary of sentiment distribution."""
     if not feedbacks:
@@ -123,3 +125,62 @@ def main(argv=None):
 
 if __name__ == "__main__":
     main(sys.argv[1:])
+
+
+import unittest
+
+class TestFeedbackFunctions(unittest.TestCase):
+
+    def test_sentiment_score(self):
+        self.assertEqual(sentiment_score("good"), 1.0)
+        self.assertEqual(sentiment_score("bad"), -1.0)
+        self.assertEqual(sentiment_score("good bad"), 0.0)
+        self.assertEqual(sentiment_score("good good"), 1.0)
+        self.assertEqual(sentiment_score("bad bad"), -1.0)
+        self.assertEqual(sentiment_score("This is good."), 1.0)
+        self.assertEqual(sentiment_score("This is bad!"), -1.0)
+        self.assertEqual(sentiment_score(""), 0.0)
+        self.assertEqual(sentiment_score("neutral"), 0.0)
+
+    def test_generate_feedback(self):
+        feedbacks = generate_feedback(5)
+        self.assertEqual(len(feedbacks), 5)
+        for feedback in feedbacks:
+            self.assertTrue(isinstance(feedback.id, int))
+            self.assertTrue(isinstance(feedback.text, str))
+            self.assertTrue(isinstance(feedback.score, float))
+            self.assertTrue(-1.0 <= feedback.score <= 1.0)
+
+    def test_summarize(self):
+        # Test case 1: Empty list
+        feedbacks1 = []
+        summary1 = summarize(feedbacks1)
+        self.assertEqual(summary1["count"], 0)
+        self.assertEqual(summary1["average_score"], 0.0)
+        self.assertEqual(summary1["positive"], 0)
+        self.assertEqual(summary1["negative"], 0)
+        self.assertEqual(summary1["neutral"], 0)
+
+        # Test case 2: List with positive, negative and neutral feedbacks
+        feedbacks2 = [
+            Feedback(id=1, text="good", score=1.0),
+            Feedback(id=2, text="bad", score=-1.0),
+            Feedback(id=3, text="neutral", score=0.0)
+        ]
+        summary2 = summarize(feedbacks2)
+        self.assertEqual(summary2["count"], 3)
+        self.assertEqual(summary2["average_score"], 0.0)
+        self.assertEqual(summary2["positive"], 1)
+        self.assertEqual(summary2["negative"], 1)
+        self.assertEqual(summary2["neutral"], 1)
+
+    def test_feedback_to_dict(self):
+        feedback = Feedback(id=1, text="test", score=0.5)
+        feedback_dict = feedback.to_dict()
+        self.assertEqual(feedback_dict["id"], 1)
+        self.assertEqual(feedback_dict["text"], "test")
+        self.assertEqual(feedback_dict["score"], 0.5)
+
+
+if __name__ == '__main__':
+    unittest.main(argv=['first-arg-is-ignored'], exit=False)
