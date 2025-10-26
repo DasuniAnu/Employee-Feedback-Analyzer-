@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Employee Feedback Dashboard</title>
+    <title>Employee Dashboard - Submit Feedback</title>
     <style>
         * {
             margin: 0;
@@ -239,7 +239,7 @@
     <div class="header">
         <h1>🏢 Employee Feedback System</h1>
         <div class="user-info">
-            <span>Welcome, <strong>John Employee</strong></span>
+            <span>Welcome, <strong>MR.Prathikshrm -Employee 102032</strong></span>
             <button class="logout-btn" onclick="logout()">Logout</button>
         </div>
     </div>
@@ -253,6 +253,14 @@
             </p>
 
             <form id="feedbackForm">
+                <div class="form-group">
+                    <label for="name">Your Name (Optional)</label>
+                    <input id="name" type="text" placeholder="e.g., Alex Johnson" style="width:100%; padding:0.8rem; border:2px solid #e0e0e0; border-radius:8px; font-size:1rem;">
+                </div>
+                <div class="form-group">
+                    <label for="email">Your Email (Optional, for follow-up)</label>
+                    <input id="email" type="email" placeholder="e.g., alex@example.com" style="width:100%; padding:0.8rem; border:2px solid #e0e0e0; border-radius:8px; font-size:1rem;">
+                </div>
                 <div class="form-group">
                     <label for="feedback">Your Feedback *</label>
                     <textarea 
@@ -273,7 +281,7 @@
                             <span class="star" data-rating="4">★</span>
                             <span class="star" data-rating="5">★</span>
                         </div>
-                        <span id="ratingText">Click here to rate</span>
+                        <span id="ratingText">Click to rate</span>
                     </div>
                 </div>
 
@@ -318,6 +326,8 @@
             e.preventDefault();
             
             const feedback = document.getElementById('feedback').value;
+            const name = document.getElementById('name').value.trim();
+            const email = document.getElementById('email').value.trim();
             const submitBtn = document.getElementById('submitBtn');
             const status = document.getElementById('status');
             const analysisResults = document.getElementById('analysisResults');
@@ -329,8 +339,8 @@
             }
 
             submitBtn.disabled = true;
-            submitBtn.textContent = 'Analyzing...';
-            status.innerHTML = '<div class="status loading">🔄 Analyzing your feedback with AI...</div>';
+            submitBtn.textContent = 'Submitting...';
+            status.innerHTML = '<div class="status loading">🔄 Submitting your feedback...</div>';
             analysisResults.style.display = 'none';
 
             try {
@@ -348,15 +358,34 @@
                 }
 
                 const data = await response.json();
+
+                // Persist to shared storage for admin dashboard
+                const stored = JSON.parse(localStorage.getItem('efa_feedback') || '[]');
+                const newItem = {
+                    id: Date.now(),
+                    text: feedback,
+                    timestamp: new Date().toISOString(),
+                    employee: name || 'Anonymous Employee',
+                    contact_name: name || '',
+                    contact_email: email || '',
+                    rating: selectedRating || null,
+                    sentiment: data.sentiment || null,
+                    urgency: data.urgency || null,
+                    themes: data.themes || {},
+                    per_theme_sentiment: data.per_theme_sentiment || null,
+                    theme_blocks: data.theme_blocks || [],
+                    suggestions: data.suggestion || null
+                };
+                stored.unshift(newItem);
+                localStorage.setItem('efa_feedback', JSON.stringify(stored));
                 
-                // Display results
-                displayAnalysisResults(data);
-                
-                status.innerHTML = '<div class="status success">✅ Feedback submitted and analyzed successfully!</div>';
-                analysisResults.style.display = 'block';
+            status.innerHTML = '<div class="status success">🎉 Thank you for your feedback! We will update you soon.</div>';
+                analysisResults.style.display = 'none';
 
                 // Clear form
                 document.getElementById('feedback').value = '';
+                document.getElementById('name').value = '';
+                document.getElementById('email').value = '';
                 selectedRating = 0;
                 document.querySelectorAll('.star').forEach(s => s.classList.remove('active'));
                 document.getElementById('ratingText').textContent = 'Click to rate';
@@ -370,65 +399,7 @@
             }
         });
 
-        function displayAnalysisResults(data) {
-            const resultsContent = document.getElementById('resultsContent');
-            
-            let html = '';
-
-            // Sentiment
-            if (data.sentiment) {
-                const sentimentClass = `sentiment-${data.sentiment.label.toLowerCase()}`;
-                html += `
-                    <div class="result-item ${sentimentClass}">
-                        <h4>😊 Sentiment Analysis</h4>
-                        <p><strong>${data.sentiment.label}</strong> (Confidence: ${(data.sentiment.score * 100).toFixed(1)}%)</p>
-                    </div>
-                `;
-            }
-
-            // Urgency
-            if (data.urgency) {
-                const urgencyClass = `urgency-${data.urgency.urgency.toLowerCase()}`;
-                const urgencyEmoji = data.urgency.urgency === 'High' ? '🚨' : 
-                                   data.urgency.urgency === 'Medium' ? '⚠️' : '✅';
-                html += `
-                    <div class="result-item ${urgencyClass}">
-                        <h4>${urgencyEmoji} Urgency Level</h4>
-                        <p><strong>${data.urgency.urgency}</strong> (Confidence: ${(data.urgency.confidence * 100).toFixed(1)}%)</p>
-                        <p><small>${data.urgency.reason}</small></p>
-                    </div>
-                `;
-            }
-
-            // Themes
-            if (data.themes) {
-                html += `
-                    <div class="result-item">
-                        <h4>🏷️ Key Themes</h4>
-                        <p><strong>Summary:</strong> ${data.themes.summary}</p>
-                        ${data.themes.entities && data.themes.entities.length > 0 ? 
-                            `<p><strong>Entities:</strong> ${data.themes.entities.join(', ')}</p>` : ''}
-                        ${data.themes.classification && data.themes.classification.label ? 
-                            `<p><strong>Category:</strong> ${data.themes.classification.label} (${(data.themes.classification.score * 100).toFixed(1)}%)</p>` : ''}
-                    </div>
-                `;
-            }
-
-            // Suggestions
-            if (data.suggestion && data.suggestion.suggestions) {
-                html += `
-                    <div class="result-item">
-                        <h4>💡 HR Recommendations</h4>
-                        <ul style="margin: 0.5rem 0; padding-left: 1.5rem;">
-                            ${data.suggestion.suggestions.map(s => `<li>${s}</li>`).join('')}
-                        </ul>
-                        <p><small><strong>Rationale:</strong> ${data.suggestion.rationale}</small></p>
-                    </div>
-                `;
-            }
-
-            resultsContent.innerHTML = html;
-        }
+        // Analysis rendering is intentionally disabled on the user dashboard.
 
         function logout() {
             if (confirm('Are you sure you want to logout?')) {
